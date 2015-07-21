@@ -53,6 +53,8 @@ import java.util.List;
 public final class MarioEnvironment implements Environment
 {
 private int[] marioEgoPos = new int[2];
+private int[] marioMovement = new int[2];
+
 private int receptiveFieldHeight = -1; // to be setup via MarioAIOptions
 private int receptiveFieldWidth = -1; // to be setup via MarioAIOptions
 private int prevRFH = -1;
@@ -689,6 +691,15 @@ public int getIntermediateReward()
 public int[] getMarioEgoPos()
 {
     return marioEgoPos;
+}
+
+public int[] getMarioMovement()
+{
+	float xm = levelScene.mario.x - levelScene.mario.xOld;
+	float ym = levelScene.mario.y - levelScene.mario.yOld;
+	marioMovement[0] = xm > 0 ? 1 : xm < 0 ? -1 : 0;
+	marioMovement[1] = ym > 0 ? 1 : ym < 0 ? -1 : 0;
+	return marioMovement;
 }
 
 public void closeRecorder()

@@ -71,7 +71,9 @@ private Random randomGen = new Random(0);
 
 final private List<Float> enemiesFloatsList = new ArrayList<Float>();
 final private float[] marioFloatPos = new float[2];
-final private int[] marioState = new int[11];
+//final private int[] marioState = new int[11];
+final private int[] marioState = new int[13];
+
 private int numberOfHiddenCoinsGained = 0;
 
 private int greenMushroomMode = 0;

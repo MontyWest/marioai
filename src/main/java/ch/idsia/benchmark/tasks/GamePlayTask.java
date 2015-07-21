@@ -41,6 +41,7 @@ public class GamePlayTask extends BasicTask implements Task
 private static final DecimalFormat df = new DecimalFormat("#.##");
 private EvaluationInfo localEvaluationInfo;
 private int difqualifications = 0;
+private int numberOfLevels = 0;
 
 public GamePlayTask(MarioAIOptions marioAIOptions)
 {
@@ -98,6 +99,7 @@ private void updateEvaluationInfo(EvaluationInfo evInfo)
 
 public void doEpisodes(final int amount, final boolean verbose, final int repetitionsOfSingleEpisode)
 {
+	numberOfLevels = amount;
     for (int i = 0; i < amount; ++i)
     {
         options.setLevelLength((200 + (i * 12) + (options.getLevelRandSeed() % (i + 1))) % 512);
@@ -133,7 +135,7 @@ public void printStatistics()
 {
     System.out.println("\n[MarioAI] ~ Evaluation Results for Task: " + localEvaluationInfo.getTaskName() +
             "\n         Weighted Fitness : " + df.format(localEvaluationInfo.computeWeightedFitness()) +
-            "\n             Mario Status : " + localEvaluationInfo.marioStatus +
+            "\n             Mario Status : " + localEvaluationInfo.marioStatus + " of " + this.numberOfLevels +
             "\n               Mario Mode : " + localEvaluationInfo.marioMode +
             "\nCollisions with creatures : " + localEvaluationInfo.collisionsWithCreatures +
             "\n     Passed (Cells, Phys) : " + localEvaluationInfo.distancePassedCells + " of " + localEvaluationInfo.levelLength + ", " + df.format(localEvaluationInfo.distancePassedPhys) + " of " + df.format(localEvaluationInfo.levelLength * 16) + " (" + localEvaluationInfo.distancePassedCells * 100 / localEvaluationInfo.levelLength + "% passed)" +

@@ -165,6 +165,14 @@ public int getIntermediateReward();
 
 public int[] getMarioEgoPos();
 
+/***
+ * [0] = X movement -1=Left 0=None 1=Right
+ * [1] = Y movement -1=Up   0=None 1=Down
+ * 
+ * @return
+ */
+public int[] getMarioMovement();
+
 public void closeRecorder();
 
 public void setReplayer(Replayer recorder);

@@ -98,6 +98,7 @@ public static byte ZLevelGeneralization(byte el, int ZLevel)
                 case (Sprite.KIND_MARIO):
                 case (Sprite.KIND_FIRE_FLOWER):
                 case (Sprite.KIND_MUSHROOM):
+                case (Sprite.KIND_GREEN_MUSHROOM):
                     return Sprite.KIND_NONE;
                 case (Sprite.KIND_BULLET_BILL):
                 case (Sprite.KIND_GOOMBA):
