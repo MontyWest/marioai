@@ -57,13 +57,23 @@
 	    <dependency>
 			<groupId>org.scalamock</groupId>
 			<artifactId>scalamock-core_2.11</artifactId>
-			<version>3.2.2</version>
+			<version>3.2.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.scala-lang</groupId>
+			<artifactId>scala-reflect</artifactId>
+			<version>${scala.version}</version>
 		</dependency>
 		<dependency>
 		    <groupId>org.scalamock</groupId>
 		    <artifactId>scalamock-scalatest-support_2.11</artifactId>
-		    <version>3.2</version>
+		    <version>3.2.1</version>
 		    <scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.scala-lang.modules</groupId>
+			<artifactId>scala-xml_2.11</artifactId>
+			<version>1.0.4</version>
 		</dependency>
 	    <dependency>
 			<groupId>org.scalatest</groupId>
@@ -97,6 +107,16 @@
 	
 	<build>
         <plugins>
+        	<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<source>${jdk.version}</source>
+					<target>${jdk.version}</target>
+				</configuration>
+			</plugin>
+        
             <plugin>
                 <groupId>org.scala-tools</groupId>
                 <artifactId>maven-scala-plugin</artifactId>

@@ -1,22 +1,27 @@
 package com.montywest.marioai.agents
 
-import com.montywest.marioai.rules._
+import com.montywest.marioai.rules.Action
+import com.montywest.marioai.rules.JumpAvailable
+import com.montywest.marioai.rules.KeyJump
+import com.montywest.marioai.rules.KeyRight
+import com.montywest.marioai.rules.KeySpeed
+import com.montywest.marioai.rules.OnGround
+import com.montywest.marioai.rules.Perception.per2int
 
 import ch.idsia.agents.Agent
-import ch.idsia.benchmark.mario.engine.sprites.Mario
-import ch.idsia.benchmark.mario.environments.Environment
 
 class MWForwardJumpingAgent extends MWObservationAgent with Agent {
 
   var name = "MW Forward Jumping Agent"
   
+  //1522958 - 96
+  
   override def getAction: Array[Boolean] = {
-    action(Mario.KEY_RIGHT) = true;
-    val bool = observation(JumpAvailable) == 1 || observation(OnGround) == 0
-    action(Mario.KEY_SPEED) = bool;
-    action(Mario.KEY_JUMP) = bool
-        
-    action
+    if ( observation(JumpAvailable) == 1 || observation(OnGround) == 0 ) {
+      Action(KeyRight, KeySpeed, KeyJump)
+    } else {
+      Action(KeyRight)
+    }
   }
   
   override def getName: String = name

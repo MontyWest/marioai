@@ -9,11 +9,10 @@ import ch.idsia.benchmark.mario.environments.Environment
 abstract class MWObservationAgent extends Agent {
 
   var observation: Observation = Observation.BLANK_OBSERVATION
-  var action: Action = Array.fill(Environment.numberOfKeys)(false)
 
   override def integrateObservation(environment: Environment) = {
     try {
-      observation = Observation.getObservation(environment);
+      observation = Observation(environment);
     } catch {
       case e: Exception => println(e.getStackTrace); throw e
     }
@@ -21,9 +20,7 @@ abstract class MWObservationAgent extends Agent {
 
   override def giveIntermediateReward(reward: Float) = {}
 
-  override def reset = {
-    action = Array.fill(Environment.numberOfKeys)(false)
-  }
+  override def reset = {};
 
   override def setObservationDetails(rfWidth: Int, rfHeight: Int, egoRow: Int, egoCol: Int) = {}
 

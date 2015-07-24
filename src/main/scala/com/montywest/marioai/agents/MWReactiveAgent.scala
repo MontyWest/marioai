@@ -1,71 +1,72 @@
 package com.montywest.marioai.agents
 
-import ch.idsia.agents.Agent
-import com.montywest.marioai.rules.JumpAvailable
-import com.montywest.marioai.rules.OnGround
-import ch.idsia.benchmark.mario.engine.sprites.Mario
-import ch.idsia.benchmark.mario.environments.Environment
-import com.montywest.marioai.rules.EnemyUpperRight
-import com.montywest.marioai.rules.PitBelow
-import com.montywest.marioai.rules.PitAhead
+import com.montywest.marioai.rules.Action
 import com.montywest.marioai.rules.EnemyLowerRight
-import com.montywest.marioai.rules.ObstacleAhead
+import com.montywest.marioai.rules.EnemyUpperRight
+import com.montywest.marioai.rules.JumpAvailable
+import com.montywest.marioai.rules.KeyJump
+import com.montywest.marioai.rules.KeyLeft
+import com.montywest.marioai.rules.KeyRight
+import com.montywest.marioai.rules.KeySpeed
 import com.montywest.marioai.rules.MarioMode
-import com.montywest.marioai.rules.MovingX
+import com.montywest.marioai.rules.ObstacleAhead
+import com.montywest.marioai.rules.OnGround
+import com.montywest.marioai.rules.Perception.per2int
+import com.montywest.marioai.rules.PitAhead
+import com.montywest.marioai.rules.PitBelow
+
+import ch.idsia.agents.Agent
 
 class MWReactiveAgent extends MWObservationAgent with Agent {
 
   var name = "MW Reactive Agent"
-  
+
   override def getAction: Array[Boolean] = {
-    
-    val jumpBlock: Boolean = (observation(MarioMode) == MarioMode.SMALL) &&
-                             (observation(EnemyUpperRight) == EnemyUpperRight.TRUE)
+       
+    val jumpSafe: Boolean = (observation(EnemyUpperRight) == EnemyUpperRight.FALSE) ||
+                            (observation(MarioMode) != MarioMode.SMALL)
                              
-    val jumpNeeded: Boolean = (observation(EnemyLowerRight) == EnemyLowerRight.TRUE)||
+    val jumpNeeded: Boolean = (observation(EnemyLowerRight) == EnemyLowerRight.TRUE) ||
                               (observation(ObstacleAhead) == ObstacleAhead.TRUE) || 
                               (observation(PitAhead) == PitAhead.TRUE) || 
                               (observation(PitBelow) == PitAhead.TRUE)
     
-    val jumpPossible: Boolean = (observation(JumpAvailable) == JumpAvailable.TRUE) ||
-                                (observation(OnGround) == OnGround.FALSE)
-                           
+    val jumpPossible: Boolean = (observation(JumpAvailable) == JumpAvailable.TRUE)
                                 
-    if (jumpNeeded && !jumpBlock) {
+    val jumpResetNeeded: Boolean = (observation(JumpAvailable) == JumpAvailable.FALSE) &&
+                                   (observation(OnGround) == OnGround.TRUE) 
+                                   
+    val onGround: Boolean = (observation(OnGround) == OnGround.TRUE)
+                           
+     //1522622 - 96
+                                   
+    if (jumpNeeded && jumpSafe) {
       if (jumpPossible) {
-         action(Mario.KEY_JUMP) = true
-         action(Mario.KEY_RIGHT) = true
-         action(Mario.KEY_LEFT) = false
-         action(Mario.KEY_SPEED) = true;
+         Action(KeyJump, KeyRight, KeySpeed)
+      } else if (jumpResetNeeded) {
+         Action(KeyLeft)
+         
       } else {
-         action(Mario.KEY_JUMP) = false
-         action(Mario.KEY_RIGHT) = false
-         action(Mario.KEY_LEFT) = true
-         action(Mario.KEY_SPEED) = false
+         Action(KeyJump, KeyRight, KeySpeed)
       }
     } else if (jumpNeeded) {
-      action(Mario.KEY_RIGHT) = false
-      action(Mario.KEY_LEFT) = true
-      action(Mario.KEY_SPEED) = false
-      action(Mario.KEY_JUMP) = false
-    } else {  
-    	action(Mario.KEY_JUMP) = false
-      action(Mario.KEY_RIGHT) = true
-      action(Mario.KEY_LEFT) = false
-      action(Mario.KEY_SPEED) = true;
+      Action(KeyLeft)
+    } else {
+      if (onGround) {
+        Action(KeyRight, KeySpeed)
+      } else {
+        Action(KeyJump, KeyRight, KeySpeed)
+      }
     }
-
-    
-    action
   }
   
   override def reset = {
-    action = Array.fill(Environment.numberOfKeys)(false)
-    action(Mario.KEY_RIGHT) = true;
-    action(Mario.KEY_SPEED) = true;
+
   }
   
   override def getName: String = name
   
   override def setName(name: String) = {this.name = name}
 }
+
+  
