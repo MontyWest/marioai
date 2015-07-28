@@ -1,6 +1,6 @@
 package com.montywest.marioai.agents
 
-import com.montywest.marioai.rules.Action
+import com.montywest.marioai.rules.ExAction
 import com.montywest.marioai.rules.EnemyLowerRight
 import com.montywest.marioai.rules.EnemyUpperRight
 import com.montywest.marioai.rules.JumpAvailable
@@ -42,20 +42,20 @@ class MWReactiveAgent extends MWObservationAgent with Agent {
                                    
     if (jumpNeeded && jumpSafe) {
       if (jumpPossible) {
-         Action(KeyJump, KeyRight, KeySpeed)
+         ExAction(KeyJump, KeyRight, KeySpeed)
       } else if (jumpResetNeeded) {
-         Action(KeyLeft)
+         ExAction(KeyLeft)
          
       } else {
-         Action(KeyJump, KeyRight, KeySpeed)
+         ExAction(KeyJump, KeyRight, KeySpeed)
       }
     } else if (jumpNeeded) {
-      Action(KeyLeft)
+      ExAction(KeyLeft)
     } else {
       if (onGround) {
-        Action(KeyRight, KeySpeed)
+        ExAction(KeyRight, KeySpeed)
       } else {
-        Action(KeyJump, KeyRight, KeySpeed)
+        ExAction(KeyJump, KeyRight, KeySpeed)
       }
     }
   }

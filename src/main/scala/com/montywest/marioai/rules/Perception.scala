@@ -151,7 +151,6 @@ object Perception {
   
   implicit def per2int(perception: Perception): Int = perception.index
   
-  //Not sure about this method...
   def unapply(n: Int): Option[Perception] = n match {
     case MarioMode() => Option(MarioMode)
     case JumpAvailable() => Option(JumpAvailable)

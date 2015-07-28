@@ -1,14 +1,13 @@
 package com.montywest.marioai.agents
 
-import com.montywest.marioai.rules.Action
 import com.montywest.marioai.rules.JumpAvailable
 import com.montywest.marioai.rules.KeyJump
 import com.montywest.marioai.rules.KeyRight
 import com.montywest.marioai.rules.KeySpeed
 import com.montywest.marioai.rules.OnGround
 import com.montywest.marioai.rules.Perception.per2int
-
 import ch.idsia.agents.Agent
+import com.montywest.marioai.rules.ExAction
 
 class MWForwardJumpingAgent extends MWObservationAgent with Agent {
 
@@ -18,9 +17,9 @@ class MWForwardJumpingAgent extends MWObservationAgent with Agent {
   
   override def getAction: Array[Boolean] = {
     if ( observation(JumpAvailable) == 1 || observation(OnGround) == 0 ) {
-      Action(KeyRight, KeySpeed, KeyJump)
+      ExAction(KeyRight, KeySpeed, KeyJump)
     } else {
-      Action(KeyRight)
+      ExAction(KeyRight)
     }
   }
   

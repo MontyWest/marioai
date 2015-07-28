@@ -1,28 +1,39 @@
 package com.montywest.marioai.rules
 
-import ch.idsia.benchmark.mario.engine.sprites.Mario
-import ch.idsia.benchmark.mario.environments.Environment
+import scala.annotation.migration
+import scala.annotation.tailrec
 
 class Rule private[Rule] (vector: Vector[Byte]) {
 
+  def getVectorRep: Vector[Byte] = {
+    vector
+  }
+  
   def getConditions: Conditions = {
-    vector.slice(0, Rule.CONDITION_LENGTH)
+    vector.slice(0, Conditions.LENGTH)
   }
   
-  def getAction: Action = {
-    Array.tabulate(Rule.EXTERNAL_ACTION_LENGTH)((x: Int) => {
-      x match {
-        case Mario.KEY_LEFT => Rule.ACTION_TRUE == vector(Rule.ACTION_LEFT_INDEX)
-        case Mario.KEY_RIGHT => Rule.ACTION_TRUE == vector(Rule.ACTION_RIGHT_INDEX)
-        case Mario.KEY_JUMP => Rule.ACTION_TRUE == vector(Rule.ACTION_JUMP_INDEX)
-        case Mario.KEY_SPEED => Rule.ACTION_TRUE == vector(Rule.ACTION_SPEED_INDEX)
-        case _ => false
+  def getExAction: ExAction = {
+    ExAction(getMWAction)     
+  }
+  
+  def getMWAction: MWAction = {
+    vector.slice(Conditions.LENGTH, Conditions.LENGTH+MWAction.LENGTH)
+  }
+  
+  def scoreAgainst(observation: Observation): Int = {
+    if (observation.length != Conditions.LENGTH)
+      throw new IllegalArgumentException("observation is a different length to conditions")
+    @tailrec
+    def scoreRecu(i: Int, sum: Int = 0): Int =  {
+      if (i == Conditions.LENGTH) sum
+      else getConditions(i) match {
+        case Conditions.DONT_CARE => scoreRecu(i+1, sum)
+        case b if b == observation(i) => scoreRecu(i+1, sum+1)
+        case _ => -1
       }
-    })      
-  }
-  
-  private def getInternalAction: Vector[Byte] = {
-    vector.slice(Rule.CONDITION_LENGTH, Rule.CONDITION_LENGTH+Rule.INTERNAL_ACTION_LENGTH)
+    }
+    scoreRecu(0)
   }
   
   override def toString(): String = {
@@ -31,85 +42,36 @@ class Rule private[Rule] (vector: Vector[Byte]) {
       case b => b.toString()
     }
     
-    (getConditions.map { b2str } mkString(" ")) + "| " + (getInternalAction mkString(" "))
+    (getConditions.map { b2str } mkString(" ")) + " | " + (getMWAction map { _.toString } mkString(" "))
   }
 }
 
 object Rule {
   
-  val DONT_CARE: Byte = -1;
+  val TOTAL_LENGTH = Conditions.LENGTH + MWAction.LENGTH
   
-  val ACTION_TRUE: Byte = 1;
-  val ACTION_FALSE: Byte = 0;
+  //Creational  
+  private val ACTION_LEFT_INDEX = MWAction.LEFT_INDEX + Conditions.LENGTH;
+  private val ACTION_RIGHT_INDEX = MWAction.RIGHT_INDEX + Conditions.LENGTH;
+  private val ACTION_JUMP_INDEX = MWAction.JUMP_INDEX + Conditions.LENGTH;
+  private val ACTION_SPEED_INDEX = MWAction.SPEED_INDEX + Conditions.LENGTH;
   
-  
-  //Judgement
-  
-  private val CONDITION_LENGTH = Perception.NUMBER_OF_PERCEPTIONS  
-  
-  def score(observation: Observation, rule: Rule): Int = {
-    if (observation.length != CONDITION_LENGTH)
-      throw new IllegalArgumentException("observation is a different length to conditions")
-    
-    def scoreRecu(i: Int, sum: Int = 0): Int =  {
-      if (i == CONDITION_LENGTH) sum
-      else rule.getConditions(i) match {
-        case DONT_CARE => scoreRecu(i+1, sum)
-        case b if b == observation(i) => scoreRecu(i+1, sum+1)
-        case _ => -1
-      }
-    }
-    scoreRecu(0)
-  }
-  
-  //Creational
-
-		  
-  private val EXTERNAL_ACTION_LENGTH = Environment.numberOfKeys
-  
-  private val INTERNAL_ACTION_LENGTH = 4
-  private val ACTION_LEFT_INDEX = 0 + CONDITION_LENGTH;
-  private val ACTION_RIGHT_INDEX = 1 + CONDITION_LENGTH;
-  private val ACTION_JUMP_INDEX = 2 + CONDITION_LENGTH;
-  private val ACTION_SPEED_INDEX = 3 + CONDITION_LENGTH;
+  val BLANK_RULE = new Rule(
+      Vector.fill(Conditions.LENGTH)(Conditions.DONT_CARE) ++ Vector.fill(MWAction.LENGTH)(MWAction.ACTION_FALSE)
+  )
   
   def apply(vec: Vector[Byte]): Rule = {
-    if (vec.length == CONDITION_LENGTH + INTERNAL_ACTION_LENGTH)
+    if (vec.length == Conditions.LENGTH + MWAction.LENGTH)
       new Rule(vec)
     else 
       throw new IllegalArgumentException("Rule vector length incorrect")
   }
   
+  def apply(conditions: Conditions, action: MWAction): Rule = {
+    new Rule(conditions ++ action);
+  }
+  
   def apply(conditions: Map[Perception, Byte], actions: Set[KeyPress]): Rule = {
-    if (conditions.forall(validateCondition)) {
-      val perMap = conditions.map { case (p, b) => (p.index, b) }
-      val actIndexSet = actions.map { getKeyPressIndex }
-      
-      new Rule(
-        Vector.tabulate(CONDITION_LENGTH+INTERNAL_ACTION_LENGTH)( (i: Int) => 
-          if (i < CONDITION_LENGTH) {
-            perMap get(i) match {
-              case None => DONT_CARE
-              case Some(b: Byte) => b
-            }
-          } else {
-            if (actIndexSet.contains(i)) ACTION_TRUE
-            else ACTION_FALSE
-          }
-        )
-      )
-    } else throw new IllegalArgumentException("Perception byte value out of range")
-  }
-  
-  private def validateCondition(cond: (Perception, Byte)): Boolean = cond match {
-    case (bp : BoolPerception, b) => (bp.TRUE == b) || (bp.FALSE == b)
-    case (ip : BytePerception, b) => (0 <= b) && (b < ip.limit)
-  }
-  
-  private def getKeyPressIndex(kp: KeyPress): Int = kp match {
-    case KeyLeft => ACTION_LEFT_INDEX
-    case KeyRight => ACTION_RIGHT_INDEX
-    case KeyJump => ACTION_JUMP_INDEX
-    case KeySpeed => ACTION_SPEED_INDEX
+    new Rule(Conditions(conditions) ++ MWAction(actions))
   }
 }
