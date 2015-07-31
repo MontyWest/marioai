@@ -18,7 +18,7 @@ class Rule private[Rule] (vector: Vector[Byte]) {
   }
   
   def getMWAction: MWAction = {
-    vector.slice(Conditions.LENGTH, Conditions.LENGTH+MWAction.LENGTH)
+    vector.slice(Conditions.LENGTH, Rule.TOTAL_LENGTH)
   }
   
   def scoreAgainst(observation: Observation): Int = {
@@ -44,6 +44,18 @@ class Rule private[Rule] (vector: Vector[Byte]) {
     
     (getConditions.map { b2str } mkString(" ")) + " | " + (getMWAction map { _.toString } mkString(" "))
   }
+  
+  override def hashCode: Int =
+    this.getVectorRep.hashCode()
+  
+  
+  override def equals(other: Any): Boolean = other match {
+    case that: Rule =>
+      that.getVectorRep == this.getVectorRep
+    case _ => false
+  }
+  
+    
 }
 
 object Rule {
@@ -67,11 +79,16 @@ object Rule {
       throw new IllegalArgumentException("Rule vector length incorrect")
   }
   
+  def build(conditionMap: Map[Perception, Byte], actionSet: Set[KeyPress]): Rule = {
+	  new Rule(Conditions(conditionMap) ++ MWAction(actionSet))
+  }
+
   def apply(conditions: Conditions, action: MWAction): Rule = {
-    new Rule(conditions ++ action);
+    if ((conditions.length == Conditions.LENGTH) && (action.length == MWAction.LENGTH)) {
+    	new Rule(conditions ++ action);      
+    } else {
+      throw new IllegalArgumentException("Rule vector length incorrect")
+    }
   }
   
-  def apply(conditions: Map[Perception, Byte], actions: Set[KeyPress]): Rule = {
-    new Rule(Conditions(conditions) ++ MWAction(actions))
-  }
 }

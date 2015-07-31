@@ -31,55 +31,62 @@ class MWReactiveRulesetAgent extends MWRulesetAgent(MWReactiveRulesetAgent.react
 
 object MWReactiveRulesetAgent {
   
+  //1521300 - 97
+  
   val reactiveRuleset: Ruleset = 
     Ruleset(
       Seq(
-        Rule(Map(EnemyLowerRight -> EnemyLowerRight.TRUE, EnemyUpperRight -> EnemyUpperRight.FALSE, JumpAvailable -> JumpAvailable.TRUE), Set(KeyJump, KeyRight, KeySpeed)),
-        Rule(Map(EnemyLowerRight -> EnemyLowerRight.TRUE, EnemyUpperRight -> EnemyUpperRight.FALSE, JumpAvailable -> JumpAvailable.FALSE, OnGround -> OnGround.TRUE), Set(KeyLeft)),
-        Rule(Map(EnemyLowerRight -> EnemyLowerRight.TRUE, EnemyUpperRight -> EnemyUpperRight.FALSE), Set(KeyJump, KeyRight, KeySpeed)),
-        Rule(Map(EnemyLowerRight -> EnemyLowerRight.TRUE, MarioMode -> MarioMode.LARGE, JumpAvailable -> JumpAvailable.TRUE), Set(KeyJump, KeyRight, KeySpeed)),
-        Rule(Map(EnemyLowerRight -> EnemyLowerRight.TRUE, MarioMode -> MarioMode.LARGE, JumpAvailable -> JumpAvailable.FALSE, OnGround -> OnGround.TRUE), Set(KeyLeft)),
-        Rule(Map(EnemyLowerRight -> EnemyLowerRight.TRUE, MarioMode -> MarioMode.LARGE), Set(KeyJump, KeyRight, KeySpeed)),
-        Rule(Map(EnemyLowerRight -> EnemyLowerRight.TRUE, MarioMode -> MarioMode.FIRE, JumpAvailable -> JumpAvailable.TRUE), Set(KeyJump, KeyRight, KeySpeed)),
-        Rule(Map(EnemyLowerRight -> EnemyLowerRight.TRUE, MarioMode -> MarioMode.FIRE, JumpAvailable -> JumpAvailable.FALSE, OnGround -> OnGround.TRUE), Set(KeyLeft)),
-        Rule(Map(EnemyLowerRight -> EnemyLowerRight.TRUE, MarioMode -> MarioMode.FIRE), Set(KeyJump, KeyRight, KeySpeed)),
+          
+//        Rule(Map(OnGround -> OnGround.TRUE, JumpAvailable -> JumpAvailable.FALSE), Set(KeyRight, KeySpeed)),
+//        Rule(Map(EnemyLowerRight -> EnemyLowerRight.TRUE, EnemyUpperRight -> EnemyUpperRight.FALSE, JumpAvailable -> JumpAvailable.TRUE), Set(KeyJump, KeyRight, KeySpeed)),
+//        Rule(Map(EnemyLowerRight -> EnemyLowerRight.TRUE, EnemyUpperRight -> EnemyUpperRight.FALSE, JumpAvailable -> JumpAvailable.TRUE), Set(KeyJump, KeyRight, KeySpeed))
+//
+//        
+        Rule.build(Map(EnemyLowerRight -> EnemyLowerRight.TRUE, EnemyUpperRight -> EnemyUpperRight.FALSE, JumpAvailable -> JumpAvailable.FALSE, OnGround -> OnGround.TRUE), Set(KeyLeft)),
+        Rule.build(Map(EnemyLowerRight -> EnemyLowerRight.TRUE, EnemyUpperRight -> EnemyUpperRight.FALSE), Set(KeyJump, KeyRight, KeySpeed)),
+        Rule.build(Map(EnemyLowerRight -> EnemyLowerRight.TRUE, MarioMode -> MarioMode.LARGE, JumpAvailable -> JumpAvailable.TRUE), Set(KeyJump, KeyRight, KeySpeed)),
+        Rule.build(Map(EnemyLowerRight -> EnemyLowerRight.TRUE, MarioMode -> MarioMode.LARGE, JumpAvailable -> JumpAvailable.FALSE, OnGround -> OnGround.TRUE), Set(KeyLeft)),
+        Rule.build(Map(EnemyLowerRight -> EnemyLowerRight.TRUE, MarioMode -> MarioMode.LARGE), Set(KeyJump, KeyRight, KeySpeed)),
+        Rule.build(Map(EnemyLowerRight -> EnemyLowerRight.TRUE, MarioMode -> MarioMode.FIRE, JumpAvailable -> JumpAvailable.TRUE), Set(KeyJump, KeyRight, KeySpeed)),
+        Rule.build(Map(EnemyLowerRight -> EnemyLowerRight.TRUE, MarioMode -> MarioMode.FIRE, JumpAvailable -> JumpAvailable.FALSE, OnGround -> OnGround.TRUE), Set(KeyLeft)),
+        Rule.build(Map(EnemyLowerRight -> EnemyLowerRight.TRUE, MarioMode -> MarioMode.FIRE), Set(KeyJump, KeyRight, KeySpeed)),
         
-        Rule(Map(ObstacleAhead -> ObstacleAhead.TRUE, EnemyUpperRight -> EnemyUpperRight.FALSE, JumpAvailable -> JumpAvailable.TRUE), Set(KeyJump, KeyRight, KeySpeed)),
-        Rule(Map(ObstacleAhead -> ObstacleAhead.TRUE, EnemyUpperRight -> EnemyUpperRight.FALSE, JumpAvailable -> JumpAvailable.FALSE, OnGround -> OnGround.TRUE), Set(KeyLeft)),
-        Rule(Map(ObstacleAhead -> ObstacleAhead.TRUE, EnemyUpperRight -> EnemyUpperRight.FALSE), Set(KeyJump, KeyRight, KeySpeed)),
-        Rule(Map(ObstacleAhead -> ObstacleAhead.TRUE, MarioMode -> MarioMode.LARGE, JumpAvailable -> JumpAvailable.TRUE), Set(KeyJump, KeyRight, KeySpeed)),
-        Rule(Map(ObstacleAhead -> ObstacleAhead.TRUE, MarioMode -> MarioMode.LARGE, JumpAvailable -> JumpAvailable.FALSE, OnGround -> OnGround.TRUE), Set(KeyLeft)),
-        Rule(Map(ObstacleAhead -> ObstacleAhead.TRUE, MarioMode -> MarioMode.LARGE), Set(KeyJump, KeyRight, KeySpeed)),
-        Rule(Map(ObstacleAhead -> ObstacleAhead.TRUE, MarioMode -> MarioMode.FIRE, JumpAvailable -> JumpAvailable.TRUE), Set(KeyJump, KeyRight, KeySpeed)),
-        Rule(Map(ObstacleAhead -> ObstacleAhead.TRUE, MarioMode -> MarioMode.FIRE, JumpAvailable -> JumpAvailable.FALSE, OnGround -> OnGround.TRUE), Set(KeyLeft)),
-        Rule(Map(ObstacleAhead -> ObstacleAhead.TRUE, MarioMode -> MarioMode.FIRE), Set(KeyJump, KeyRight, KeySpeed)),
+        Rule.build(Map(ObstacleAhead -> ObstacleAhead.TRUE, EnemyUpperRight -> EnemyUpperRight.FALSE, JumpAvailable -> JumpAvailable.TRUE), Set(KeyJump, KeyRight, KeySpeed)),
+        Rule.build(Map(ObstacleAhead -> ObstacleAhead.TRUE, EnemyUpperRight -> EnemyUpperRight.FALSE, JumpAvailable -> JumpAvailable.FALSE, OnGround -> OnGround.TRUE), Set(KeyLeft)),
+        Rule.build(Map(ObstacleAhead -> ObstacleAhead.TRUE, EnemyUpperRight -> EnemyUpperRight.FALSE), Set(KeyJump, KeyRight, KeySpeed)),
+        Rule.build(Map(ObstacleAhead -> ObstacleAhead.TRUE, MarioMode -> MarioMode.LARGE, JumpAvailable -> JumpAvailable.TRUE), Set(KeyJump, KeyRight, KeySpeed)),
+        Rule.build(Map(ObstacleAhead -> ObstacleAhead.TRUE, MarioMode -> MarioMode.LARGE, JumpAvailable -> JumpAvailable.FALSE, OnGround -> OnGround.TRUE), Set(KeyLeft)),
+        Rule.build(Map(ObstacleAhead -> ObstacleAhead.TRUE, MarioMode -> MarioMode.LARGE), Set(KeyJump, KeyRight, KeySpeed)),
+        Rule.build(Map(ObstacleAhead -> ObstacleAhead.TRUE, MarioMode -> MarioMode.FIRE, JumpAvailable -> JumpAvailable.TRUE), Set(KeyJump, KeyRight, KeySpeed)),
+        Rule.build(Map(ObstacleAhead -> ObstacleAhead.TRUE, MarioMode -> MarioMode.FIRE, JumpAvailable -> JumpAvailable.FALSE, OnGround -> OnGround.TRUE), Set(KeyLeft)),
+        Rule.build(Map(ObstacleAhead -> ObstacleAhead.TRUE, MarioMode -> MarioMode.FIRE), Set(KeyJump, KeyRight, KeySpeed)),
 
-        Rule(Map(PitAhead -> PitAhead.TRUE, EnemyUpperRight -> EnemyUpperRight.FALSE, JumpAvailable -> JumpAvailable.TRUE), Set(KeyJump, KeyRight, KeySpeed)),
-        Rule(Map(PitAhead -> PitAhead.TRUE, EnemyUpperRight -> EnemyUpperRight.FALSE, JumpAvailable -> JumpAvailable.FALSE, OnGround -> OnGround.TRUE), Set(KeyLeft)),
-        Rule(Map(PitAhead -> PitAhead.TRUE, EnemyUpperRight -> EnemyUpperRight.FALSE), Set(KeyJump, KeyRight, KeySpeed)),
-        Rule(Map(PitAhead -> PitAhead.TRUE, MarioMode -> MarioMode.LARGE, JumpAvailable -> JumpAvailable.TRUE), Set(KeyJump, KeyRight, KeySpeed)),
-        Rule(Map(PitAhead -> PitAhead.TRUE, MarioMode -> MarioMode.LARGE, JumpAvailable -> JumpAvailable.FALSE, OnGround -> OnGround.TRUE), Set(KeyLeft)),
-        Rule(Map(PitAhead -> PitAhead.TRUE, MarioMode -> MarioMode.LARGE), Set(KeyJump, KeyRight, KeySpeed)),
-        Rule(Map(PitAhead -> PitAhead.TRUE, MarioMode -> MarioMode.FIRE, JumpAvailable -> JumpAvailable.TRUE), Set(KeyJump, KeyRight, KeySpeed)),
-        Rule(Map(PitAhead -> PitAhead.TRUE, MarioMode -> MarioMode.FIRE, JumpAvailable -> JumpAvailable.FALSE, OnGround -> OnGround.TRUE), Set(KeyLeft)),
-        Rule(Map(PitAhead -> PitAhead.TRUE, MarioMode -> MarioMode.FIRE), Set(KeyJump, KeyRight, KeySpeed)),
+        Rule.build(Map(PitAhead -> PitAhead.TRUE, EnemyUpperRight -> EnemyUpperRight.FALSE, JumpAvailable -> JumpAvailable.TRUE), Set(KeyJump, KeyRight, KeySpeed)),
+        Rule.build(Map(PitAhead -> PitAhead.TRUE, EnemyUpperRight -> EnemyUpperRight.FALSE, JumpAvailable -> JumpAvailable.FALSE, OnGround -> OnGround.TRUE), Set(KeyLeft)),
+        Rule.build(Map(PitAhead -> PitAhead.TRUE, EnemyUpperRight -> EnemyUpperRight.FALSE), Set(KeyJump, KeyRight, KeySpeed)),
+        Rule.build(Map(PitAhead -> PitAhead.TRUE, MarioMode -> MarioMode.LARGE, JumpAvailable -> JumpAvailable.TRUE), Set(KeyJump, KeyRight, KeySpeed)),
+        Rule.build(Map(PitAhead -> PitAhead.TRUE, MarioMode -> MarioMode.LARGE, JumpAvailable -> JumpAvailable.FALSE, OnGround -> OnGround.TRUE), Set(KeyLeft)),
+        Rule.build(Map(PitAhead -> PitAhead.TRUE, MarioMode -> MarioMode.LARGE), Set(KeyJump, KeyRight, KeySpeed)),
+        Rule.build(Map(PitAhead -> PitAhead.TRUE, MarioMode -> MarioMode.FIRE, JumpAvailable -> JumpAvailable.TRUE), Set(KeyJump, KeyRight, KeySpeed)),
+        Rule.build(Map(PitAhead -> PitAhead.TRUE, MarioMode -> MarioMode.FIRE, JumpAvailable -> JumpAvailable.FALSE, OnGround -> OnGround.TRUE), Set(KeyLeft)),
+        Rule.build(Map(PitAhead -> PitAhead.TRUE, MarioMode -> MarioMode.FIRE), Set(KeyJump, KeyRight, KeySpeed)),
         
-        Rule(Map(PitBelow -> PitBelow.TRUE, EnemyUpperRight -> EnemyUpperRight.FALSE, JumpAvailable -> JumpAvailable.TRUE), Set(KeyJump, KeyRight, KeySpeed)),
-        Rule(Map(PitBelow -> PitBelow.TRUE, EnemyUpperRight -> EnemyUpperRight.FALSE, JumpAvailable -> JumpAvailable.FALSE, OnGround -> OnGround.TRUE), Set(KeyLeft)),
-        Rule(Map(PitBelow -> PitBelow.TRUE, EnemyUpperRight -> EnemyUpperRight.FALSE), Set(KeyJump, KeyRight, KeySpeed)),
-        Rule(Map(PitBelow -> PitBelow.TRUE, MarioMode -> MarioMode.LARGE, JumpAvailable -> JumpAvailable.TRUE), Set(KeyJump, KeyRight, KeySpeed)),
-        Rule(Map(PitBelow -> PitBelow.TRUE, MarioMode -> MarioMode.LARGE, JumpAvailable -> JumpAvailable.FALSE, OnGround -> OnGround.TRUE), Set(KeyLeft)),
-        Rule(Map(PitBelow -> PitBelow.TRUE, MarioMode -> MarioMode.LARGE), Set(KeyJump, KeyRight, KeySpeed)),
-        Rule(Map(PitBelow -> PitBelow.TRUE, MarioMode -> MarioMode.FIRE, JumpAvailable -> JumpAvailable.TRUE), Set(KeyJump, KeyRight, KeySpeed)),
-        Rule(Map(PitBelow -> PitBelow.TRUE, MarioMode -> MarioMode.FIRE, JumpAvailable -> JumpAvailable.FALSE, OnGround -> OnGround.TRUE), Set(KeyLeft)),
-        Rule(Map(PitBelow -> PitBelow.TRUE, MarioMode -> MarioMode.FIRE), Set(KeyJump, KeyRight, KeySpeed)),
+        Rule.build(Map(PitBelow -> PitBelow.TRUE, EnemyUpperRight -> EnemyUpperRight.FALSE, JumpAvailable -> JumpAvailable.TRUE), Set(KeyJump, KeyRight, KeySpeed)),
+        Rule.build(Map(PitBelow -> PitBelow.TRUE, EnemyUpperRight -> EnemyUpperRight.FALSE, JumpAvailable -> JumpAvailable.FALSE, OnGround -> OnGround.TRUE), Set(KeyLeft)),
+        Rule.build(Map(PitBelow -> PitBelow.TRUE, EnemyUpperRight -> EnemyUpperRight.FALSE), Set(KeyJump, KeyRight, KeySpeed)),
+        Rule.build(Map(PitBelow -> PitBelow.TRUE, MarioMode -> MarioMode.LARGE, JumpAvailable -> JumpAvailable.TRUE), Set(KeyJump, KeyRight, KeySpeed)),
+        Rule.build(Map(PitBelow -> PitBelow.TRUE, MarioMode -> MarioMode.LARGE, JumpAvailable -> JumpAvailable.FALSE, OnGround -> OnGround.TRUE), Set(KeyLeft)),
+        Rule.build(Map(PitBelow -> PitBelow.TRUE, MarioMode -> MarioMode.LARGE), Set(KeyJump, KeyRight, KeySpeed)),
+        Rule.build(Map(PitBelow -> PitBelow.TRUE, MarioMode -> MarioMode.FIRE, JumpAvailable -> JumpAvailable.TRUE), Set(KeyJump, KeyRight, KeySpeed)),
+        Rule.build(Map(PitBelow -> PitBelow.TRUE, MarioMode -> MarioMode.FIRE, JumpAvailable -> JumpAvailable.FALSE, OnGround -> OnGround.TRUE), Set(KeyLeft)),
+        Rule.build(Map(PitBelow -> PitBelow.TRUE, MarioMode -> MarioMode.FIRE), Set(KeyJump, KeyRight, KeySpeed)),
         
-        Rule(Map(EnemyLowerRight -> EnemyLowerRight.TRUE), Set(KeyLeft)),
-        Rule(Map(ObstacleAhead -> ObstacleAhead.TRUE), Set(KeyLeft)),
-        Rule(Map(PitAhead -> PitAhead.TRUE), Set(KeyLeft)),
-        Rule(Map(PitBelow -> PitBelow.TRUE), Set(KeyLeft)),
+        Rule.build(Map(EnemyLowerRight -> EnemyLowerRight.TRUE), Set(KeyLeft)),
+        Rule.build(Map(ObstacleAhead -> ObstacleAhead.TRUE), Set(KeyLeft)),
+        Rule.build(Map(PitAhead -> PitAhead.TRUE), Set(KeyLeft)),
+        Rule.build(Map(PitBelow -> PitBelow.TRUE), Set(KeyLeft)),
         
-        Rule(Map(OnGround -> OnGround.TRUE), Set(KeyRight, KeySpeed))
+        Rule.build(Map(OnGround -> OnGround.TRUE), Set(KeyRight, KeySpeed))
       ),
       Set(KeyRight, KeyJump, KeySpeed)
     )
