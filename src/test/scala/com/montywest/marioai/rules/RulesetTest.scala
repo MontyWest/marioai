@@ -104,4 +104,6 @@ class RulesetTest extends FlatSpec with Matchers with MockFactory with BeforeAnd
    assert(ExAction(Vector[Byte](1, 0, 0, 0)).deep == ruleset.getBestExAction(Vector[Byte](1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1)).deep) 
   }
   
+  
+  
 }

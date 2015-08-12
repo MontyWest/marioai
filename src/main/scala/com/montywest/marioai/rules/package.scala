@@ -68,7 +68,7 @@ package object rules {
       ac
     }
     
-    def apply(keys: Set[KeyPress]): ExAction = {
+    def build(keys: Set[KeyPress]): ExAction = {
       Array.tabulate(LENGTH)( (i: Int) => i match {
         case KEY_LEFT => keys.contains(KeyLeft)
         case KEY_RIGHT => keys.contains(KeyRight)
@@ -103,10 +103,10 @@ package object rules {
     val ACTION_FALSE: Byte = 0;
     
     def apply(keys: KeyPress*): MWAction = {
-      apply(keys.toSet)
+      build(keys.toSet)
     }
     
-    def apply(keys: Set[KeyPress]): MWAction = {
+    def build(keys: Set[KeyPress]): MWAction = {
       val actIndexSet = keys.map { getKeyPressIndex }
       
       Vector.tabulate(LENGTH)( (i: Int) => 

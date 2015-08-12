@@ -62,7 +62,7 @@ object Ruleset {
   val FALLBACK_ACTION = MWAction(KeyRight, KeySpeed, KeyJump)
   
   def apply(rules: Seq[Rule], defaultAction: Set[KeyPress]): Ruleset = {
-    new Ruleset(rules, MWAction(defaultAction))
+    new Ruleset(rules, MWAction.build(defaultAction))
   }
   
   def build(vec: Vector[Byte], fallbackDefaultAction: MWAction = FALLBACK_ACTION): Ruleset = {

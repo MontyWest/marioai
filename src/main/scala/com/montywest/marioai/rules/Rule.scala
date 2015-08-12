@@ -80,7 +80,7 @@ object Rule {
   }
   
   def build(conditionMap: Map[Perception, Byte], actionSet: Set[KeyPress]): Rule = {
-	  new Rule(Conditions(conditionMap) ++ MWAction(actionSet))
+	  new Rule(Conditions(conditionMap) ++ MWAction.build(actionSet))
   }
 
   def apply(conditions: Conditions, action: MWAction): Rule = {
