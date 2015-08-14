@@ -25,7 +25,6 @@ class MWReactiveRulesetAgent extends MWRulesetAgent(MWReactiveRulesetAgent.react
   
   def setName(name: String) = this.name = name
 
-  println(MWReactiveRulesetAgent.reactiveRuleset.getVectorRep(true).mkString(" "))
 }
 
 
@@ -36,12 +35,7 @@ object MWReactiveRulesetAgent {
   val reactiveRuleset: Ruleset = 
     Ruleset(
       Seq(
-          
-//        Rule(Map(OnGround -> OnGround.TRUE, JumpAvailable -> JumpAvailable.FALSE), Set(KeyRight, KeySpeed)),
-//        Rule(Map(EnemyLowerRight -> EnemyLowerRight.TRUE, EnemyUpperRight -> EnemyUpperRight.FALSE, JumpAvailable -> JumpAvailable.TRUE), Set(KeyJump, KeyRight, KeySpeed)),
-//        Rule(Map(EnemyLowerRight -> EnemyLowerRight.TRUE, EnemyUpperRight -> EnemyUpperRight.FALSE, JumpAvailable -> JumpAvailable.TRUE), Set(KeyJump, KeyRight, KeySpeed))
-//
-//        
+
         Rule.build(Map(EnemyLowerRight -> EnemyLowerRight.TRUE, EnemyUpperRight -> EnemyUpperRight.FALSE, JumpAvailable -> JumpAvailable.FALSE, OnGround -> OnGround.TRUE), Set(KeyLeft)),
         Rule.build(Map(EnemyLowerRight -> EnemyLowerRight.TRUE, EnemyUpperRight -> EnemyUpperRight.FALSE), Set(KeyJump, KeyRight, KeySpeed)),
         Rule.build(Map(EnemyLowerRight -> EnemyLowerRight.TRUE, MarioMode -> MarioMode.LARGE, JumpAvailable -> JumpAvailable.TRUE), Set(KeyJump, KeyRight, KeySpeed)),

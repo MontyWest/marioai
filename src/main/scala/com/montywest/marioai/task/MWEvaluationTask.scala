@@ -19,6 +19,11 @@ class MWEvaluationTask(val numberOfLevels: Int,
   
   override def updateOptions(episode: Int, options: MWLevelOptions): MWLevelOptions = updateOptionsFunc(episode, options)
   
+  override def updateMarioAIOptions(episode: Int, options: MarioAIOptions): MarioAIOptions = {
+    options.setLevelRandSeed(options.getLevelRandSeed + 3)
+    options
+  }
+  
   override def getFitness: Int = {
     localEvaluationInfo.computeWeightedFitness(evalValues)
   }

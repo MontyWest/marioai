@@ -23,6 +23,8 @@ abstract class MWBasicTask(val name: String, val baseMarioAIOptions: MarioAIOpti
   
   protected def updateOptions(episode: Int, options: MWLevelOptions): MWLevelOptions
   
+  protected def updateMarioAIOptions(episode: Int, options: MarioAIOptions): MarioAIOptions = options
+  
   override def doEpisodes(amount: Int, verbose: Boolean, repetitionsOfSingleEpisode: Int): Unit = {
     @tailrec
     def runSingle(iteration: Int, prevOptions: MWLevelOptions, disqualifications: Int): Int = {
@@ -30,7 +32,9 @@ abstract class MWBasicTask(val name: String, val baseMarioAIOptions: MarioAIOpti
         disqualifications
       } else {
         val newOptions = updateOptions(iteration, prevOptions)
-        super.setOptionsAndReset(MWLevelOptions.updateMarioAIOptions(options, newOptions))
+        
+        val marioAIOptions = MWLevelOptions.updateMarioAIOptions(options, newOptions)
+        super.setOptionsAndReset(this.updateMarioAIOptions(iteration, marioAIOptions))
         val disqualified: Int = if (!runSingleEpisode(repetitionsOfSingleEpisode)) 1 else 0
         
         updateLocalEvaluationInfo(super.getEvaluationInfo)
@@ -59,6 +63,7 @@ abstract class MWBasicTask(val name: String, val baseMarioAIOptions: MarioAIOpti
   def getStatistics(): String = {
     val df: DecimalFormat = new DecimalFormat("#.##")
     return  "\n[MarioAI] ~ Evaluation Results for Task: " + localEvaluationInfo.getTaskName() +
+            "\n                    Agent : " + options.getAgent.getName +
             "\n         Weighted Fitness : " + getFitness +
             "\n             Mario Status : " + localEvaluationInfo.marioStatus + " of " + numberOfLevels +
             "\n               Mario Mode : " + localEvaluationInfo.marioMode +
