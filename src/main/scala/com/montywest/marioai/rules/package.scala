@@ -28,6 +28,14 @@ package object rules {
       case (ip : BytePerception, b) => (0 <= b) && (b < ip.limit)
     }
     
+    def getLimitForIndex(index: Int): Byte = index match {
+      case Perception(perception) => perception match {
+        case bp : BoolPerception => Math.max(bp.TRUE, bp.FALSE).toByte
+        case ip : BytePerception => ip.limit
+      }
+      case _ => throw new IllegalArgumentException
+    }
+    
     def apply(conditions: Map[Perception, Byte]): Conditions = {
       if (conditions.forall(validateCondition)) {
         val perMap = conditions.map { case (p, b) => (p.index, b) }
@@ -113,6 +121,20 @@ package object rules {
         if (actIndexSet.contains(i)) ACTION_TRUE
         else ACTION_FALSE
       )
+    }
+    
+    def build(left: Boolean, right: Boolean, jump: Boolean, speed: Boolean): MWAction = {
+      Vector.tabulate(LENGTH)((i: Int) => {
+        if (i match {
+              case LEFT_INDEX => left
+              case RIGHT_INDEX => right
+              case JUMP_INDEX => jump
+              case SPEED_INDEX => speed
+            }) 
+          {ACTION_TRUE}
+        else
+          {ACTION_FALSE}
+      })
     }
     
     def getKeyPressIndex(kp: KeyPress): Int = kp match {

@@ -7,8 +7,8 @@ class MWEvaluationTask(val numberOfLevels: Int,
                  val evalValues: MWEvaluationMultipliers, 
                  val baseLevelOptions: MWLevelOptions, 
                  val updateOptionsFunc: (Int, MWLevelOptions) => MWLevelOptions, 
-                 val visualisation: Boolean = true, 
-                 val args: Array[String] = Array.empty)
+                 val visualisation: Boolean, 
+                 val args: Array[String])
                  
                    extends MWBasicTask("MWMainPlayTask", {
                      val marioAIOptions = new MarioAIOptions(args)
@@ -20,7 +20,7 @@ class MWEvaluationTask(val numberOfLevels: Int,
   override def updateOptions(episode: Int, options: MWLevelOptions): MWLevelOptions = updateOptionsFunc(episode, options)
   
   override def updateMarioAIOptions(episode: Int, options: MarioAIOptions): MarioAIOptions = {
-    options.setLevelRandSeed(options.getLevelRandSeed + 3)
+    options.setLevelRandSeed(options.getLevelRandSeed + episode)
     options
   }
   
@@ -42,4 +42,18 @@ class MWEvaluationTask(val numberOfLevels: Int,
     super.injectLevelSeed(seed)
     this
   }
+}
+
+object MWEvaluationTask {
+  
+  def apply(numberOfLevels: Int, 
+            evalValues: MWEvaluationMultipliers, 
+            baseLevelOptions: MWLevelOptions, 
+            updateOptionsFunc: (Int, MWLevelOptions) => MWLevelOptions, 
+            visualisation: Boolean = true, 
+            args: Array[String] = Array.empty): MWEvaluationTask = {
+    
+    new MWEvaluationTask(numberOfLevels, evalValues, baseLevelOptions, updateOptionsFunc, visualisation, args)
+  }
+  
 }

@@ -57,8 +57,8 @@ case object EnemyLeft extends BoolPerception(3) {
   }
 }
 case object EnemyUpperRight extends BoolPerception(4) {
-  val AREA_1_UL = (-3, 0); val AREA_1_BR = (-1, 2);
-  val AREA_2_UL = (-3, 3); val AREA_2_BR = (-2,4);
+  val AREA_1_UL = (-3, 0); val AREA_1_BR = (-1, 3);
+  val AREA_2_UL = (-3, 3); val AREA_2_BR = (-2,5);
   
   def apply(environment: Environment): Byte = {
     if(Perception.enemyInBoxRelativeToMario(environment, AREA_1_UL, AREA_1_BR) ||
@@ -67,8 +67,8 @@ case object EnemyUpperRight extends BoolPerception(4) {
   }
 }
 case object EnemyLowerRight extends BoolPerception(5) {
-  val AREA_1_UL = (0, 1); val AREA_1_BR = (1, 3);
-  val AREA_2_UL = (-1, 4); val AREA_2_BR = (2, 5);
+  val AREA_1_UL = (0, 1); val AREA_1_BR = (1, 2);
+  val AREA_2_UL = (-1, 2); val AREA_2_BR = (2, 2);
   
   def apply(environment: Environment): Byte = {
     if(Perception.enemyInBoxRelativeToMario(environment, AREA_1_UL, AREA_1_BR) ||
@@ -78,18 +78,19 @@ case object EnemyLowerRight extends BoolPerception(5) {
   
 }
 case object ObstacleAhead extends BoolPerception(6) {
-  val AREA_OBS_UL = (-1, 1); val AREA_OBS_BR = (0, 4);
-  val AREA_STEP_UL = (1, 1); val AREA_STEP_BR = (2, 5);
+  val AREA_OBS_UL = (-2, 1); val AREA_OBS_BR = (0, 3);//4
+  val AREA_STEP_UL = (1, 1); val AREA_STEP_BR = (2, 3);//5
   
   def apply(environment: Environment): Byte = {
     if(Perception.obstacleInBoxRelativeToMario(environment, AREA_OBS_UL, AREA_OBS_BR) ||
-        Perception.stepInBoxRelativeToMario(environment, AREA_STEP_UL, AREA_STEP_BR))
+        Perception.stepInBoxRelativeToMario(environment, AREA_STEP_UL, AREA_STEP_BR) 
+        )
       1 else 0
   }
   
 }
 case object PitAhead extends BoolPerception(7) {
-  val COL_L = 1; val COL_R = 4
+  val COL_L = 1; val COL_R = 2
   
   def apply(environment: Environment): Byte = {
     if(Perception.pitRelativeToMario(environment, COL_L, COL_R))
@@ -98,7 +99,7 @@ case object PitAhead extends BoolPerception(7) {
   
 }
 case object PitBelow extends BoolPerception(8) {
-  val COL_L = -1; val COL_R = 1;
+  val COL_L = 0; val COL_R = 0;
   
   def apply(environment: Environment): Byte = {
     if(Perception.pitRelativeToMario(environment, COL_L, COL_R))
@@ -116,8 +117,12 @@ case object MovingX extends BytePerception(9, 3) {
    */
   def apply(environment: Environment): Byte = {
     environment.getMarioMovement.apply(0) match {
-      case 0 => 0
-      case -1 => 1
+      case 0 => {
+        0
+      }
+      case -1 => {
+        1
+      }
       case 1 => 2
       case _ => 0
     }
@@ -130,14 +135,14 @@ case object MovingY extends BytePerception(10, 3) {
   val STILL: Byte = 0; val DOWN: Byte = 1; val UP: Byte = 2;
   /***
    * 0 = No movement
-   * 1 = Left
-   * 2 = Right
+   * 1 = DOWN
+   * 2 = UP
    */
   def apply(environment: Environment): Byte = {
     environment.getMarioMovement.apply(1) match {
       case 0 => 0
-      case -1 => 1
-      case 1 => 2
+      case 1 => 1
+      case -1 => 2
       case _ => 0
     }
   }
@@ -186,7 +191,20 @@ object Perception {
       obs(x)
     }
     
-    checkBox(level, test, getMarioPos(environment), a, b)
+    val opens = this.getOpens(environment, a._2, b._2);
+    
+    val b2 = (b._1, {
+      opens.headOption match {
+        case None => b._2
+        case Some(x) => x-1
+      }
+    })
+    
+    if (b2._2 < a._2) {
+      false
+    } else {
+      checkBox(level, test, getMarioPos(environment), a, b2)
+    }
   }
 
   def stepInBoxRelativeToMario(environment: Environment, a: (Int, Int), b: (Int, Int)): Boolean = {
@@ -194,9 +212,21 @@ object Perception {
     val test = (grid: Array[Array[Byte]], tup: Tuple2[Int, Int]) => {
       val y = tup._2; val x = tup._1;
       (y != Math.max(a._2, b._2)) && obs(grid(x)(y+1)) && !obs(grid(x)(y))
-    }      
+    }   
+
+    val opens = this.getOpens(environment, a._2, b._2);
+    val b2 = (b._1, {
+      opens.headOption match {
+        case None => b._2
+        case Some(x) => x-1
+      }
+    })
     
-    checkBox(level, test, getMarioPos(environment), a, b)
+    if (b2._2 < a._2) {
+      false
+    } else {
+      checkBox(level, test, getMarioPos(environment), a, b2)
+    }
   }
   
   def obstacleFillBoxRelativeToMario(environment: Environment, a: (Int, Int), b: (Int, Int)): Boolean = {
@@ -205,11 +235,12 @@ object Perception {
     	val x = grid(tup._1)(tup._2)
       !obs(x)
     }      
-    
+
     checkBox(level, test, getMarioPos(environment), a, b, false)
+    
   }
   
-  def pitRelativeToMario(environment: Environment, a: Int, b: Int): Boolean = {
+  private def getOpens(environment: Environment, a: Int, b: Int): List[Int] = {
     val level = environment.getLevelSceneObservationZ(2); //
     val test = (x: Byte) => x == 0 || x == GeneralizerLevelScene.COIN_ANIM;
     val bottomRow = level.length - 1
@@ -229,6 +260,11 @@ object Perception {
     }{
       opens = opens.filter { j => level(i)(j) == 0 || level(i)(j) == GeneralizerLevelScene.COIN_ANIM }
     }
+    opens.map { x => x - mario._2 }
+  }
+  
+  def pitRelativeToMario(environment: Environment, a: Int, b: Int): Boolean = {
+    val opens = this.getOpens(environment, a, b)
     !opens.isEmpty
   }
   

@@ -9,69 +9,85 @@ import ec.vector.IntegerVectorSpecies
 
 class DynamicParameterIntegerVectorSpecies extends IntegerVectorSpecies {  
 
+  var dynamicParamsClassOpt: Option[DynamicSpeciesParameters] = None;
   
-  override def dynamicParameterOverride(state: EvolutionState, base: Parameter, default: Parameter): Unit = {
-    if (state.parameters.exists(base.push(DynamicParametersIntegerVectorSpecies.P_DYNAMIC_PARAMETER_CLASS), default.push(DynamicParametersIntegerVectorSpecies.P_DYNAMIC_PARAMETER_CLASS))) {
+  override def setup(state: EvolutionState, base: Parameter): Unit = {
+    val default = defaultBase
+    
+    if (dynamicParamsClassOpt.isEmpty && state.parameters.exists(base.push(DynamicParameterIntegerVectorSpecies.P_DYNAMIC_PARAMETER_CLASS), default.push(DynamicParameterIntegerVectorSpecies.P_DYNAMIC_PARAMETER_CLASS))) {
       val dynamicParamsClassOpt: Option[DynamicSpeciesParameters] =
         state.parameters.getInstanceForParameter(
-              base.push(DynamicParametersIntegerVectorSpecies.P_DYNAMIC_PARAMETER_CLASS),
-              default.push(DynamicParametersIntegerVectorSpecies.P_DYNAMIC_PARAMETER_CLASS),
+              base.push(DynamicParameterIntegerVectorSpecies.P_DYNAMIC_PARAMETER_CLASS),
+              default.push(DynamicParameterIntegerVectorSpecies.P_DYNAMIC_PARAMETER_CLASS),
               classOf[DynamicSpeciesParameters]) match {
         case obj: DynamicSpeciesParameters => Some(obj)
         case _ => state.output.fatal("Dynamical parameter class wasn't a subclass of DynamicSpeciesParameters",
-                                      base.push(DynamicParametersIntegerVectorSpecies.P_DYNAMIC_PARAMETER_CLASS),
-                                      default.push(DynamicParametersIntegerVectorSpecies.P_DYNAMIC_PARAMETER_CLASS))
+                                      base.push(DynamicParameterIntegerVectorSpecies.P_DYNAMIC_PARAMETER_CLASS),
+                                      default.push(DynamicParameterIntegerVectorSpecies.P_DYNAMIC_PARAMETER_CLASS))
                   None
         }
+    }
+    
+    super.setup(state, base)
+  }
+  
+  override def dynamicParameterOverride(state: EvolutionState, base: Parameter, default: Parameter): Unit = {
        
-      if (dynamicParamsClassOpt.isDefined) {
-        val dynamicParamsClass: DynamicSpeciesParameters = dynamicParamsClassOpt.get
+    if (dynamicParamsClassOpt.isDefined) {
+      val dynamicParamsClass = dynamicParamsClassOpt.get
+      
+      if (dynamicParamsClass.minGene.isDefined) {
+        fill(minGene, dynamicParamsClass.minGene.get)
+      }
+      if (dynamicParamsClass.maxGene.isDefined) {
+        fill(minGene, dynamicParamsClass.maxGene.get)
+      }
+      if (dynamicParamsClass.mutationProb.isDefined) {
+        fill(mutationProbability, dynamicParamsClass.mutationProb.get)
+      }
+      
+      if (dynamicParamsClass.moduloNum.isDefined) {
+        val moduloNum = dynamicParamsClass.moduloNum.get
         
-        if (dynamicParamsClass.minGene.isDefined) {
-          fill(minGene, dynamicParamsClass.minGene.get)
-        }
-        if (dynamicParamsClass.maxGene.isDefined) {
-          fill(minGene, dynamicParamsClass.maxGene.get)
-        }
-        if (dynamicParamsClass.mutationProb.isDefined) {
-          fill(mutationProbability, dynamicParamsClass.mutationProb.get)
-        }
+        if (moduloNum == 0)
+          state.output.fatal(
+                      "[Dynamic Params] Modulo by zero is undefined. moduloNum return must be non-zero.");
         
-        if (dynamicParamsClass.moduloNum.isDefined) {
-          val moduloNum = dynamicParamsClass.moduloNum.get
-          
-          if (moduloNum == 0)
-            state.output.fatal(
-                        "[Dynamic Params] Modulo by zero is undefined. moduloNum return must be non-zero.");
-          
-          if ((genomeSize % moduloNum) != 0)
-            state.output.fatal(
-                 "[Dynamic Params] moduloNum must divide genome size.");
-          
-          dynamicGenomeByModuloIndices(state, dynamicParamsClass, moduloNum);
-        }
+        if ((genomeSize % moduloNum) != 0)
+          state.output.fatal(
+               "[Dynamic Params] moduloNum must divide genome size.");
         
-        if (dynamicParamsClass.numSegments.isDefined) {
-          val numSegments = dynamicParamsClass.numSegments.get
-          if(numSegments < 0)
-                state.output.fatal(
-                    "[Dynamic Params] Invalid number of genome segments: " + numSegments
-                    + "\nIt must be a nonnegative value.");
-          
-          val segmentType = dynamicParamsClass.segmentType.getOrElse(VectorSpecies.P_SEGMENT_START)
-          
-          if(segmentType.equalsIgnoreCase(VectorSpecies.P_SEGMENT_START)) {
-            this.dynamicGenomeSegmentsByStartIndices(state, dynamicParamsClass, numSegments)
-          } else if(segmentType.equalsIgnoreCase(VectorSpecies.P_SEGMENT_END)) {
-            this.dynamicGenomeSegmentsByEndIndices(state, dynamicParamsClass, numSegments)
-          } else
+        dynamicGenomeByModuloIndices(state, dynamicParamsClass, moduloNum);
+      }
+      
+      if (dynamicParamsClass.numSegments.isDefined) {
+        val numSegments = dynamicParamsClass.numSegments.get
+        if(numSegments < 0)
               state.output.fatal(
-                  "[Dynamic Params] Invalid specification of genome segment type: " + segmentType
-                  + "\nThe segmentType must have the value of " + VectorSpecies.P_SEGMENT_START + " or " + VectorSpecies.P_SEGMENT_END);
-          
-        }
+                  "[Dynamic Params] Invalid number of genome segments: " + numSegments
+                  + "\nIt must be a nonnegative value.");
+        
+        val segmentType = dynamicParamsClass.segmentType.getOrElse(VectorSpecies.P_SEGMENT_START)
+        
+        if(segmentType.equalsIgnoreCase(VectorSpecies.P_SEGMENT_START)) {
+          this.dynamicGenomeSegmentsByStartIndices(state, dynamicParamsClass, numSegments)
+        } else if(segmentType.equalsIgnoreCase(VectorSpecies.P_SEGMENT_END)) {
+          this.dynamicGenomeSegmentsByEndIndices(state, dynamicParamsClass, numSegments)
+        } else
+            state.output.fatal(
+                "[Dynamic Params] Invalid specification of genome segment type: " + segmentType
+                + "\nThe segmentType must have the value of " + VectorSpecies.P_SEGMENT_START + " or " + VectorSpecies.P_SEGMENT_END);
+        
+      }
+
+      for(i <- 0 until genomeSize) {
+    	  if (dynamicParamsClass.minGene(i).isDefined) minGene(i) = dynamicParamsClass.minGene(i).get
+        if (dynamicParamsClass.maxGene(i).isDefined) minGene(i) = dynamicParamsClass.maxGene(i).get
+        if (dynamicParamsClass.mutationProb(i).isDefined) mutationProbability(i) = dynamicParamsClass.mutationProb(i).get
       }
     }
+    
+    super.dynamicParameterOverride(state, base, default)
   }
   
   private def dynamicGenomeByModuloIndices(state: EvolutionState, dynamicParamsClass: DynamicSpeciesParameters, moduloNum: Int): Unit = {
@@ -173,6 +189,6 @@ class DynamicParameterIntegerVectorSpecies extends IntegerVectorSpecies {
   }
 }
 
-object DynamicParametersIntegerVectorSpecies {
+object DynamicParameterIntegerVectorSpecies {
   val P_DYNAMIC_PARAMETER_CLASS: String = "dynamic-param-class";
 }

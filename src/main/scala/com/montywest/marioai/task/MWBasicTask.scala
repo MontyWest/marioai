@@ -62,7 +62,7 @@ abstract class MWBasicTask(val name: String, val baseMarioAIOptions: MarioAIOpti
   
   def getStatistics(): String = {
     val df: DecimalFormat = new DecimalFormat("#.##")
-    return  "\n[MarioAI] ~ Evaluation Results for Task: " + localEvaluationInfo.getTaskName() +
+    return  "\n[MarioAI] ~ Evaluation Results for Task - " + localEvaluationInfo.getTaskName() + "\n" +
             "\n                    Agent : " + options.getAgent.getName +
             "\n         Weighted Fitness : " + getFitness +
             "\n             Mario Status : " + localEvaluationInfo.marioStatus + " of " + numberOfLevels +

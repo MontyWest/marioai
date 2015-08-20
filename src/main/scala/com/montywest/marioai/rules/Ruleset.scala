@@ -1,6 +1,7 @@
 package com.montywest.marioai.rules
 
 import scala.annotation.tailrec
+import scala.collection.mutable.WrappedArray
 
 class Ruleset( val rules: Seq[Rule], val defaultAction: MWAction, favourHigher: Boolean = true) {
 
@@ -14,14 +15,21 @@ class Ruleset( val rules: Seq[Rule], val defaultAction: MWAction, favourHigher: 
   def getBestExAction(observation: Observation): ExAction = {
     
     @tailrec
-    def getBestRuleRecu(ls: Seq[Rule], best: Option[Rule] = None, bestScore: Int = 0): Option[Rule] = ls match {
-      case Nil => best
+    def getBestRuleRecu(ls: Seq[Rule], best: Option[Rule] = None, bestScore: Int = 0, index: Int = 0, bestIndex: Option[Int] = None): Option[Rule] = ls match {
+      case Nil => {
+//        val i = bestIndex match {
+//          case None => "def"
+//          case Some(x) => "" + (2*x + 25)
+//        }
+//        println("Rule chosen - " + i)
+        best
+      }
       case (r +: ts) => {
         val newScore = r.scoreAgainst(observation)
         if (newRuleBetter(bestScore, newScore))
-          getBestRuleRecu(ts, Some(r), newScore)
+          getBestRuleRecu(ts, Some(r), newScore, index+1, Some(index))
         else
-          getBestRuleRecu(ts, best, bestScore)
+          getBestRuleRecu(ts, best, bestScore, index+1, bestIndex)
       }
     }
     
@@ -82,6 +90,11 @@ object Ruleset {
       }
       
     } else throw new IllegalArgumentException("Malformed vector representation of ruleset")
+  }
+  
+  def buildFromArray(arr: Array[Byte], fallbackAction: MWAction): Ruleset = {
+    val wa: WrappedArray[Byte] = arr
+    Ruleset.build(wa.toVector, fallbackAction)
   }
   
 }
