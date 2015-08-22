@@ -9,12 +9,20 @@ import ec.Individual
 import ec.vector.ByteVectorIndividual
 import ec.simple.SimpleFitness
 import com.montywest.marioai.learning.ec.eval.EvolvedAgentRulesetEvaluator
+import com.montywest.marioai.rules.Ruleset
+import com.montywest.marioai.agents.MWRulesetAgent
+import ch.idsia.agents.Agent
+import com.montywest.marioai.agents.MWRulesetFileAgent
 
 class RulesetEvolveStatistics extends Statistics {
 
   var genLog: Int = 0
   var finalLog: Int = 0
-  var agentFilename: Option[String] = None
+  var bestAgentFilename: Option[String] = None
+  var finalAgentFilename: Option[String] = None
+  var overallBestIndividual: Option[(Int, ByteVectorIndividual)] = None
+  var currentBestIndividual: Option[(Int, ByteVectorIndividual)] = None
+  private var milliCheckpoint: Long = System.currentTimeMillis();
   
   override def setup(state: EvolutionState, base: Parameter): Unit = {
     super.setup(state, base)
@@ -38,7 +46,7 @@ class RulesetEvolveStatistics extends Statistics {
       }
     }
     
-    agentFilename = {
+    finalAgentFilename = {
       val str = state.parameters.getStringWithDefault(base.push(P_FINAL_AGENT_FILE), null, "")
       if (str == "") {
         None
@@ -47,6 +55,40 @@ class RulesetEvolveStatistics extends Statistics {
       }
     }
     
+    bestAgentFilename = {
+      val str = state.parameters.getStringWithDefault(base.push(P_BEST_AGENT_FILE), null, "")
+      if (str == "") {
+        None
+      } else {
+        Some(str)
+      }
+    }
+    
+    
+    milliCheckpoint = System.currentTimeMillis()
+  }
+  
+  override def finalStatistics(state: EvolutionState, result: Int): Unit = {
+    super.finalStatistics(state, result);
+    
+    //Write last population to finalLog
+    state.population.subpops(0).printSubpopulationForHumans(state, finalLog)
+    
+    val fallback = state.evaluator.p_problem.asInstanceOf[EvolvedAgentRulesetEvaluator].fallbackAction
+    
+    //Write best and last best to agent files
+    if (bestAgentFilename.isDefined && overallBestIndividual.isDefined) {
+      val bestRuleset: Ruleset = Ruleset.buildFromArray(overallBestIndividual.get._2.genome, fallback)
+      val bestAgent: MWRulesetAgent = MWRulesetAgent("best-learnt", bestRuleset)
+      MWRulesetFileAgent.toFile(bestAgentFilename.get, bestAgent, true)
+    }
+    
+    //Write best and last best to agent files
+    if (finalAgentFilename.isDefined && currentBestIndividual.isDefined) {
+      val currentRuleset: Ruleset = Ruleset.buildFromArray(currentBestIndividual.get._2.genome, fallback)
+      val currentAgent: MWRulesetAgent = MWRulesetAgent("final-learnt", currentRuleset)
+      MWRulesetFileAgent.toFile(finalAgentFilename.get, currentAgent, true)
+    }
   }
   
   override def postEvaluationStatistics(state: EvolutionState): Unit = {
@@ -93,6 +135,13 @@ class RulesetEvolveStatistics extends Statistics {
     }
     
     val all = "~all~ " + genNum + delim + levelSeed + delim + avScore + delim + bestScore
+    state.output.message(all)
+    
+    val timeNowMillis = System.currentTimeMillis()
+    val timeTaken = ((timeNowMillis - milliCheckpoint) / 1000d).toInt
+    state.output.message("Time taken: " + timeTaken)
+    milliCheckpoint = timeNowMillis
+    
     state.output.println(all + 
         "\nLevel Seed    : " + levelSeed + 
         "\nAverage Score : " + avScore + 
@@ -100,9 +149,22 @@ class RulesetEvolveStatistics extends Statistics {
         "\nBest Agent    :-" +
         "\n    " + agentStr + 
         "\n-----------------------------------------------------\n\n", genLog)
+        
+     if (bestInd.isDefined) {
+       currentBestIndividual = Some(genNum, bestInd.get)
+       overallBestIndividual match {
+         case Some((_: Int, bvi: ByteVectorIndividual)) => bvi.fitness match {
+           case f: SimpleFitness => {
+             if (bestScore >= f.fitness()) {
+               overallBestIndividual = Some(genNum, bestInd.get)
+             }
+           }
+           case _ => state.output.fatal("This statistics class (RulesetEvolveStatistics) requires individuals with SimpleFitness")
+         }
+         case None => overallBestIndividual = Some(genNum, bestInd.get)
+       }
+     }
   } 
-  
-  
 }
 
 
@@ -111,4 +173,5 @@ object RulesetEvolveStatistics {
   val P_GENFILE = "gen-file"
   val P_FINALFILE = "final-file"
   val P_FINAL_AGENT_FILE = "final-agent-file"
+  val P_BEST_AGENT_FILE = "best-agent-file"
 }

@@ -2,7 +2,7 @@ parent.0 = @ec.es.ESDefaults es.params
 
 #General
 breedthreads 	= 4
-evalthreads 	= 4
+evalthreads 	= 1
 seed.0 = 694
 seed.1 = 53995
 seed.2 = 9032
@@ -20,6 +20,7 @@ generations 	= 5
 pop.subpops 						= 1
 pop.subpop.0.size 					= 50
 pop.subpop.0.species 				= com.montywest.marioai.learning.ec.vector.RulesetSpecies
+pop.subpop.0.species.fitness		= ec.simple.SimpleFitness
 
 #	 Rulelength 15, So 20 rules gives 300
 pop.subpop.0.species.genome-size 	= 300
@@ -30,25 +31,28 @@ pop.subpop.0.species.min-gene		= -1
 pop.subpop.0.species.max-gene		= 2
 pop.subpop.0.species.mutation-type	= reset
 pop.subpop.0.species.mutation-prob  = 0.0
-pop.subpop.0.species.crossover-type = 0
+pop.subpop.0.species.crossover-type = one
 
 #	Handles min and max
 pop.subpop.0.species.dynamic-param-class = com.montywest.marioai.learning.ec.params.RulesetParams
 
 #	Condition params
+pop.subpop.0.species.condition						= true
 pop.subpop.0.species.condition.mutation-prob 		= 0.2
 pop.subpop.0.species.condition.favour_byte 			= -1
 pop.subpop.0.species.condition.favour_probability 	= 0.4
 #	Action params
+pop.subpop.0.species.action							= true
 pop.subpop.0.species.action.mutation-prob 			= 0.2
 
 
 # +++ STATS +++
 stat.num-children 						= 1
 stat.child.0 							= com.montywest.marioai.learning.ec.stats.RulesetEvolveStatistics
-stat.child.0.gen-file					= gen.stat
-stat.child.0.final-file 				= final.stat
-stat.child.0.final-agent-file			= final.agent
+stat.child.0.gen-file					= ../gen.stat
+stat.child.0.final-file 				= ../final.stat
+stat.child.0.final-agent-file			= final-learnt
+stat.child.0.best-agent-file			= best-learnt
 
 
 # +++ MUTATION +++
@@ -62,8 +66,8 @@ eval.problem							= com.montywest.marioai.learning.ec.eval.EvolvedAgentRulesetE
 #	Seeds for generating levels
 #	each generation g, seed used is:
 #		prev_seed + add + g*mult
-#   where prev_seed is seed_start on g = 0
-
+#   where prev_seed is seed_start on g  = 0
+eval.problem.seed						= true
 eval.problem.seed.start					= 2568
 eval.problem.seed.add					= 3
 eval.problem.seed.mult					= 7
@@ -77,28 +81,34 @@ eval.problem.level.base.enemies			= true
 eval.problem.level.base.cannons			= false
 eval.problem.level.base.start-mode-num  = 2
 eval.problem.level.base.type-num		= 0
-eval.problem.level.base.length-num		= 256
-eval.problem.level.base.time-limit		= 190
+eval.problem.level.base.length-num		= 200
+eval.problem.level.base.time-limit		= 100
 eval.problem.level.0.difficulty-num		= 0
 eval.problem.level.0.type-num			= 1
 eval.problem.level.1.type-num			= 0
 eval.problem.level.2.difficulty-num		= 1
 eval.problem.level.2.type-num			= 0
 eval.problem.level.3.type-num			= 2
+eval.problem.level.3.gaps				= false
 eval.problem.level.4.difficulty-num		= 3
 eval.problem.level.4.type-num			= 0
+eval.problem.level.4.gaps				= true
 eval.problem.level.5.difficulty-num		= 5
 eval.problem.level.5.cannons			= true
 eval.problem.level.6.difficulty-num		= 10
 eval.problem.level.7.difficulty-num		= 20
+eval.problem.level.7.gaps				= false
 eval.problem.level.8.difficulty-num		= 2
 eval.problem.level.8.type-num			= 1
+eval.problem.level.8.gaps				= true
+eval.problem.level.8.tubes				= false
 eval.problem.level.8.enemies			= false
 eval.problem.level.8.cannons			= false
 eval.problem.level.8.length-num			= 500
 eval.problem.level.8.time-limit			= 250
 eval.problem.level.9.difficulty-num		= 10
 eval.problem.level.9.type-num			= 0
+eval.problem.level.9.tubes				= false
 eval.problem.level.9.enemies			= false
 eval.problem.level.9.cannons			= false
 eval.problem.level.9.length-num			= 200
@@ -107,9 +117,10 @@ eval.problem.level.9.time-limit			= 130
 #	Evaluation Multiplier
 eval.problem.mults						= true
 eval.problem.mults.distance				= 1
-eval.problem.mults.win					= 1024
-eval.problem.mults.mode					= 32
-eval.problem.mults.time-left			= 8
+eval.problem.mults.win					= 1600
+eval.problem.mults.mode					= 300
+eval.problem.mults.kills				= 30
+eval.problem.mults.time-left			= 2
 
 #	Fallback Action
 eval.problem.fallback-action			= true

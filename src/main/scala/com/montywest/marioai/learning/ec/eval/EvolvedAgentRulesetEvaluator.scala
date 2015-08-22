@@ -1,27 +1,30 @@
 package com.montywest.marioai.learning.ec.eval
 
 import scala.annotation.tailrec
+
+import com.montywest.marioai.agents.MWRulesetAgent
+import com.montywest.marioai.agents.MWRulesetAgent
+import com.montywest.marioai.agents.MWRulesetAgent
+import com.montywest.marioai.agents.MWRulesetAgent
+import com.montywest.marioai.agents.MWRulesetAgent
+import com.montywest.marioai.learning.ec.params.EvaluationParamsUtil
+import com.montywest.marioai.rules.KeyRight
+import com.montywest.marioai.rules.KeySpeed
+import com.montywest.marioai.rules.MWAction
+import com.montywest.marioai.rules.Ruleset
+import com.montywest.marioai.task.EvaluationTask
 import com.montywest.marioai.task.MWEvaluationMultipliers
+import com.montywest.marioai.task.MWEvaluationTask
 import com.montywest.marioai.task.MWLevelOptions
+
+import ch.idsia.agents.Agent
 import ec.EvolutionState
 import ec.Individual
 import ec.Problem
+import ec.simple.SimpleFitness
 import ec.simple.SimpleProblemForm
 import ec.util.Parameter
-import com.montywest.marioai.learning.ec.params.EvaluationParamsUtil
-import com.montywest.marioai.task.MWEvaluationTask
 import ec.vector.ByteVectorIndividual
-import com.montywest.marioai.agents.MWRulesetAgent
-import ch.idsia.agents.Agent
-import com.montywest.marioai.agents.MWRulesetAgent
-import com.montywest.marioai.rules.Ruleset
-import com.montywest.marioai.agents.MWRulesetAgent
-import com.montywest.marioai.agents.MWRulesetAgent
-import com.montywest.marioai.rules.MWAction
-import com.montywest.marioai.rules.KeySpeed
-import com.montywest.marioai.agents.MWRulesetAgent
-import com.montywest.marioai.rules.KeyRight
-import ec.simple.SimpleFitness
 
 class EvolvedAgentRulesetEvaluator extends Problem with SimpleProblemForm {
 
@@ -42,7 +45,7 @@ class EvolvedAgentRulesetEvaluator extends Problem with SimpleProblemForm {
   private var _fallbackAction: MWAction = MWAction()
   def fallbackAction = _fallbackAction
   
-  private var task: Option[MWEvaluationTask] = None
+  private var task: Option[EvaluationTask] = None
   
   override def prepareToEvaluate(state: EvolutionState, thread: Int): Unit = {
     if (task.isEmpty) {
@@ -58,32 +61,39 @@ class EvolvedAgentRulesetEvaluator extends Problem with SimpleProblemForm {
   }
   
   override def evaluate(state: EvolutionState, individual: Individual, subpop: Int, thread: Int): Unit = {
-    individual match {
-      case ind: ByteVectorIndividual => {
-        if (task.isDefined) {
-          val evalTask = task.get
-          val name = this.buildIndAgentName(state, individual, subpop, thread)
-          val ruleset: Ruleset = Ruleset.buildFromArray(ind.genome, fallbackAction)
-          val agent: Agent = MWRulesetAgent(name, ruleset)
-          
-          val iFitness = Math.max(evalTask.withAgent(agent).evaluate, 1)
-          
-          ind.fitness match {
-            case _: SimpleFitness => {
-              ind.fitness.asInstanceOf[SimpleFitness].setFitness(state, iFitness.toDouble, false)
-              ind.evaluated = true
+    try {
+      individual match {
+        case ind: ByteVectorIndividual => {
+          if (task.isDefined) {
+            val evalTask = task.get
+            val name = this.buildIndAgentName(state, individual, subpop, thread)
+            val ruleset: Ruleset = Ruleset.buildFromArray(ind.genome, fallbackAction)
+            val agent: Agent = MWRulesetAgent(name, ruleset)
+            
+            val iFitness = evalTask.withAgent(agent)
+                                   .withLevelSeed(_taskSeeds(state.generation))
+                                   .evaluate
+            
+//            state.output.message("Evalled: " + iFitness)
+            ind.fitness match {
+              case _: SimpleFitness => {
+                ind.fitness.asInstanceOf[SimpleFitness].setFitness(state, iFitness.toDouble, false)
+                ind.evaluated = true
+              }
+              case _ => {
+                state.output.fatal("This evaluator (EvolvedAgentRulesetEvaluator) requires a individuals to have SimpleFitness")
+              }
             }
-            case _ => {
-              state.output.fatal("This evaluator (EvolvedAgentRulesetEvaluator) requires a individuals to have SimpleFitness")
-            }
+          } else {
+            state.output.fatal("Task was not defined when evaluating individual, implying prepareToEvaluate was not run on this instance.")
           }
-        } else {
-          state.output.fatal("Task was not defined when evaluating individual, implying prepareToEvaluate was not run on this instance.")
+        }
+        case _ => {
+          state.output.fatal("This evaluator (EvolvedAgentRulesetEvaluator) requires a ByteVectorIndividual")
         }
       }
-      case _ => {
-        state.output.fatal("This evaluator (EvolvedAgentRulesetEvaluator) requires a ByteVectorIndividual")
-      }
+    } catch {
+      case e: Exception => state.output.fatal("Exception thrown in evaluator: " + e + " " + e.getMessage + " " + e.getStackTraceString)
     }
     
   }
@@ -99,11 +109,12 @@ class EvolvedAgentRulesetEvaluator extends Problem with SimpleProblemForm {
           base.push(P_SEED).push(P_SEED_START), default.push(P_SEED).push(P_SEED_START))
     }
     
-    val seedStart = state.parameters.getInt(base.push(P_SEED).push(P_SEED_START), default.push(P_SEED).push(P_SEED_START))
-    val seedAdd = state.parameters.getIntWithDefault(base.push(P_SEED).push(P_SEED_ADD), default.push(P_SEED).push(P_SEED_ADD), 0)
-    val seedMult = state.parameters.getIntWithDefault(base.push(P_SEED).push(P_SEED_MULT), default.push(P_SEED).push(P_SEED_MULT), 1)
-
+    val levelSeeds = EvaluationParamsUtil.getLevelSeeds(state.parameters, base.push(P_SEED), 0, 0, 1)
     
+    val seedStart = levelSeeds._1
+    val seedAdd = levelSeeds._2
+    val seedMult = levelSeeds._3
+
     var prevSeed = seedStart; 
     def memmedTS(g: Int): Int = {
       val ns = prevSeed + seedAdd + (g*seedMult)
@@ -118,14 +129,15 @@ class EvolvedAgentRulesetEvaluator extends Problem with SimpleProblemForm {
     _numberOfLevels = EvaluationParamsUtil.getNumberOfLevels(state.parameters, base.push(P_LEVEL)) match {
       case None => state.output.fatal(EvaluationParamsUtil.P_NUM_OF_LEVELS + " must be defined in params file", base.push(P_LEVEL)); 0
       case Some(x) => x
-    }    
-
+    }  
+    
     //EvalMults
     _evalMults = EvaluationParamsUtil.getEvaluationMutlipliers(state.parameters, base.push(P_MULTS))
-    
+            
     //LevelOptions
     _baseLevelOptions  = EvaluationParamsUtil.getBaseLevelOptions(state.parameters, base.push(P_LEVEL))
     _updateOptionsFunc = EvaluationParamsUtil.getUpdateLevelOptionsFunction(state.parameters, base.push(P_LEVEL), numberOfLevels)
+
     
     //Fallback
     _fallbackAction = {

@@ -11,7 +11,7 @@ abstract sealed class Perception(val index: Int) {
 }
 
 /**
- * An Byte Perception returns an Byte between 0 (inclusive) and limit (exclusive)
+ * An Byte Perception returns an Byte between 0 (inclusive) and limit (inclusive)
  */
 abstract sealed class BytePerception(index: Int, val limit: Byte) extends Perception(index)
 
@@ -24,7 +24,7 @@ abstract sealed class BoolPerception(index: Int) extends Perception(index) {
 }
 
 
-case object MarioMode extends BytePerception(0, 3) {
+case object MarioMode extends BytePerception(0, 2) {
   
   val SMALL: Byte = 0; val LARGE: Byte = 1; val FIRE: Byte = 2;
   
@@ -107,7 +107,7 @@ case object PitBelow extends BoolPerception(8) {
   }
   
 }
-case object MovingX extends BytePerception(9, 3) {
+case object MovingX extends BytePerception(9, 2) {
   
   val STILL: Byte = 0; val LEFT: Byte = 1; val RIGHT: Byte = 2;
   /***
@@ -130,7 +130,7 @@ case object MovingX extends BytePerception(9, 3) {
   
 
 }
-case object MovingY extends BytePerception(10, 3) {
+case object MovingY extends BytePerception(10, 2) {
   
   val STILL: Byte = 0; val DOWN: Byte = 1; val UP: Byte = 2;
   /***

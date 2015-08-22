@@ -15,24 +15,23 @@ class RulesetSpecies extends DynamicParameterIntegerVectorSpecies {
   
   
   override def setup(state: EvolutionState, base: Parameter) {
+    
+    setupGenome(state, base);
+    
     favourMutation = Array.fill(genomeSize)(false)
     favourProbability = Array.fill(genomeSize)(0.5)
     favourByte = Array.fill(genomeSize)(0)
     
+
     super.setup(state, base)
-    
-    if (i_prototype == null) {
-      state.output.fatal("Prototype indiv is null!")
-    }
   }
   
   override def dynamicParameterOverride(state: EvolutionState, base: Parameter, default: Parameter): Unit = {
     super.dynamicParameterOverride(state, base, default)
-    
+
     val dpc = dynamicParamsClassOpt match {
         case Some(p) => p match {
           case p: RulesetParams => {
-            
             if (genomeSize % p.ruleLength != 0)
               state.output.fatal("Genomesize must be a multiple of rule length (" + p.ruleLength + ")",
                                   base.push(VectorSpecies.P_GENOMESIZE),
@@ -50,15 +49,16 @@ class RulesetSpecies extends DynamicParameterIntegerVectorSpecies {
         }
       }
     
+    
     if(state.parameters.exists(base.push(RulesetSpecies.P_CONDITION), default.push(RulesetSpecies.P_CONDITION))) {
       dpc.runOnIndexes(Condition, genomeSize){
-        (x: Int) => loadParametersForGene(state, x, base.push(RulesetSpecies.P_CONDITION), default.push(RulesetSpecies.P_CONDITION), "" + x)
+        (x: Int) => loadParametersForGene(state, x, base.push(RulesetSpecies.P_CONDITION), default.push(RulesetSpecies.P_CONDITION), "")
       }
     }
     
     if(state.parameters.exists(base.push(RulesetSpecies.P_ACTION), default.push(RulesetSpecies.P_ACTION))) {
       dpc.runOnIndexes(Action, genomeSize){
-        (x: Int) => loadParametersForGene(state, x, base.push(RulesetSpecies.P_ACTION), default.push(RulesetSpecies.P_ACTION), "" + x)
+        (x: Int) => loadParametersForGene(state, x, base.push(RulesetSpecies.P_ACTION), default.push(RulesetSpecies.P_ACTION), "")
       }
     }
   }

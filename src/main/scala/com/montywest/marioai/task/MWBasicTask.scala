@@ -13,7 +13,7 @@ abstract class MWBasicTask(val name: String, val baseMarioAIOptions: MarioAIOpti
   val localEvaluationInfo = new EvaluationInfo();
   var disqualifications = 0;
   localEvaluationInfo.setTaskName(name);
-  resetLocalEvaluationInfo
+  this.resetLocalEvaluationInfo
   
   def getFitness: Int = localEvaluationInfo.computeWeightedFitness()
   
@@ -22,8 +22,8 @@ abstract class MWBasicTask(val name: String, val baseMarioAIOptions: MarioAIOpti
   protected def baseLevelOptions: MWLevelOptions
   
   protected def updateOptions(episode: Int, options: MWLevelOptions): MWLevelOptions
-  
-  protected def updateMarioAIOptions(episode: Int, options: MarioAIOptions): MarioAIOptions = options
+    
+  protected def nextLevelSeed(episode: Int, currentSeed: Int): Int
   
   override def doEpisodes(amount: Int, verbose: Boolean, repetitionsOfSingleEpisode: Int): Unit = {
     @tailrec
@@ -34,7 +34,9 @@ abstract class MWBasicTask(val name: String, val baseMarioAIOptions: MarioAIOpti
         val newOptions = updateOptions(iteration, prevOptions)
         
         val marioAIOptions = MWLevelOptions.updateMarioAIOptions(options, newOptions)
-        super.setOptionsAndReset(this.updateMarioAIOptions(iteration, marioAIOptions))
+        marioAIOptions.setLevelRandSeed(nextLevelSeed(iteration, marioAIOptions.getLevelRandSeed))
+        
+        super.setOptionsAndReset(marioAIOptions)
         val disqualified: Int = if (!runSingleEpisode(repetitionsOfSingleEpisode)) 1 else 0
         
         updateLocalEvaluationInfo(super.getEvaluationInfo)
@@ -50,14 +52,16 @@ abstract class MWBasicTask(val name: String, val baseMarioAIOptions: MarioAIOpti
     doEpisodes(numberOfLevels, false, 1)
   }
   
-  protected def injectAgent(agent: Agent) = {
+  protected def injectAgent(agent: Agent, resetEval: Boolean): Unit = {
     options.setAgent(agent);
     reset
+    if (resetEval) this.resetLocalEvaluationInfo
   }
   
-  protected def injectLevelSeed(seed: Int) = {
+  protected def injectLevelSeed(seed: Int, resetEval: Boolean): Unit = {
     options.setLevelRandSeed(seed)
     reset
+    if (resetEval) this.resetLocalEvaluationInfo
   }
   
   def getStatistics(): String = {

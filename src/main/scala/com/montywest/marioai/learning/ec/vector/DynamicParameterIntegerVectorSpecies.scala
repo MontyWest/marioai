@@ -13,19 +13,22 @@ class DynamicParameterIntegerVectorSpecies extends IntegerVectorSpecies {
   
   override def setup(state: EvolutionState, base: Parameter): Unit = {
     val default = defaultBase
-    
+
     if (dynamicParamsClassOpt.isEmpty && state.parameters.exists(base.push(DynamicParameterIntegerVectorSpecies.P_DYNAMIC_PARAMETER_CLASS), default.push(DynamicParameterIntegerVectorSpecies.P_DYNAMIC_PARAMETER_CLASS))) {
-      val dynamicParamsClassOpt: Option[DynamicSpeciesParameters] =
-        state.parameters.getInstanceForParameter(
-              base.push(DynamicParameterIntegerVectorSpecies.P_DYNAMIC_PARAMETER_CLASS),
-              default.push(DynamicParameterIntegerVectorSpecies.P_DYNAMIC_PARAMETER_CLASS),
-              classOf[DynamicSpeciesParameters]) match {
-        case obj: DynamicSpeciesParameters => Some(obj)
-        case _ => state.output.fatal("Dynamical parameter class wasn't a subclass of DynamicSpeciesParameters",
-                                      base.push(DynamicParameterIntegerVectorSpecies.P_DYNAMIC_PARAMETER_CLASS),
-                                      default.push(DynamicParameterIntegerVectorSpecies.P_DYNAMIC_PARAMETER_CLASS))
-                  None
-        }
+      dynamicParamsClassOpt = {
+        state.parameters.getInstanceForParameter(base.push(DynamicParameterIntegerVectorSpecies.P_DYNAMIC_PARAMETER_CLASS),
+                                                 default.push(DynamicParameterIntegerVectorSpecies.P_DYNAMIC_PARAMETER_CLASS),
+                                                 classOf[DynamicSpeciesParameters])
+           match {
+                case obj: DynamicSpeciesParameters => {
+                  Some(obj)
+                }
+                case _ => state.output.fatal("Dynamical parameter class wasn't a subclass of DynamicSpeciesParameters",
+                                              base.push(DynamicParameterIntegerVectorSpecies.P_DYNAMIC_PARAMETER_CLASS),
+                                              default.push(DynamicParameterIntegerVectorSpecies.P_DYNAMIC_PARAMETER_CLASS))
+                          None
+                }
+           }
     }
     
     super.setup(state, base)
@@ -81,9 +84,15 @@ class DynamicParameterIntegerVectorSpecies extends IntegerVectorSpecies {
       }
 
       for(i <- 0 until genomeSize) {
-    	  if (dynamicParamsClass.minGene(i).isDefined) minGene(i) = dynamicParamsClass.minGene(i).get
-        if (dynamicParamsClass.maxGene(i).isDefined) minGene(i) = dynamicParamsClass.maxGene(i).get
-        if (dynamicParamsClass.mutationProb(i).isDefined) mutationProbability(i) = dynamicParamsClass.mutationProb(i).get
+    	  if (dynamicParamsClass.minGene(i).isDefined) {
+          minGene(i) = dynamicParamsClass.minGene(i).get
+        }
+        if (dynamicParamsClass.maxGene(i).isDefined) {
+          maxGene(i) = dynamicParamsClass.maxGene(i).get
+        }
+        if (dynamicParamsClass.mutationProb(i).isDefined) {
+          mutationProbability(i) = dynamicParamsClass.mutationProb(i).get
+        }
       }
     }
     
@@ -98,8 +107,8 @@ class DynamicParameterIntegerVectorSpecies extends IntegerVectorSpecies {
       if (min.isDefined || max.isDefined || prob.isDefined) {
         for (j <- i until genomeSize by moduloNum) {
           if (min.isDefined) minGene(j) = min.get
-            if (max.isDefined) maxGene(j) = max.get
-            if (prob.isDefined) mutationProbability(j) = prob.get
+          if (max.isDefined) maxGene(j) = max.get
+          if (prob.isDefined) mutationProbability(j) = prob.get
         }
       }
     }

@@ -19,9 +19,8 @@ class MWEvaluationTask(val numberOfLevels: Int,
   
   override def updateOptions(episode: Int, options: MWLevelOptions): MWLevelOptions = updateOptionsFunc(episode, options)
   
-  override def updateMarioAIOptions(episode: Int, options: MarioAIOptions): MarioAIOptions = {
-    options.setLevelRandSeed(options.getLevelRandSeed + episode)
-    options
+  override def nextLevelSeed(episode: Int, lastSeed: Int) =  {
+    (3*episode) + lastSeed
   }
   
   override def getFitness: Int = {
@@ -34,13 +33,17 @@ class MWEvaluationTask(val numberOfLevels: Int,
   }
   
   override def withAgent(agent: Agent): MWEvaluationTask = {
-    super.injectAgent(agent)
+    super.injectAgent(agent, true)
     this
   }
   
   override def withLevelSeed(seed: Int): MWEvaluationTask = {
-    super.injectLevelSeed(seed)
+    super.injectLevelSeed(seed, true)
     this
+  }
+  
+  override def getLevelSeed: Int = {
+    options.getLevelRandSeed
   }
 }
 

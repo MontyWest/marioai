@@ -10,6 +10,8 @@ trait EvaluationTask {
   
   def withLevelSeed(seed: Int): EvaluationTask;
   
+  def getLevelSeed: Int;
+  
   def getStatistics: String;
   
 }

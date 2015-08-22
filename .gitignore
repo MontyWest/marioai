@@ -1,3 +1,7 @@
+agents/
+*.stat
+eval-task.out
+
 *.class
 *.log
 

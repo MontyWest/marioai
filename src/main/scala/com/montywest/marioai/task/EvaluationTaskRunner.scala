@@ -8,12 +8,23 @@ import com.montywest.marioai.agents.MWReactiveAgent
 import com.montywest.marioai.agents.MWRulesetFileAgent
 import ch.idsia.agents.Agent
 import com.montywest.marioai.agents.MWReactiveAgent
+import com.montywest.marioai.agents.MWRulesetAgent
+import com.montywest.marioai.learning.ec.eval.EvolvedAgentRulesetEvaluator
+import java.io.IOException
+import java.io.FileWriter
+import com.montywest.marioai.rules.Rule
 
 object EvaluationTaskRunner {
   
   val LEVEL_SEED_KEY = "-seed";
   val LEVEL_SEED_DEFAULT = 52;
+  
+  val LEVEL_SEED_RUNS_KEY = "-seedRuns";
+  val LEVEL_SEED_RUNS_DEFAULT = 100;
 
+  val OUTFILE_KEY = "-outFile";
+  val OUTFILE_DEFAULT = "eval-task.out";
+  
   val NUMBER_OF_LEVELS_KEY = "-nol";
   val NUMBER_OF_LEVELS_DEFAULT = 20;
   
@@ -64,7 +75,18 @@ object EvaluationTaskRunner {
       case Some(x) => x
     }
     println("Level seed: " + levelSeed + "\n");
-      
+    
+    val outfile: String =  getStringArg(OUTFILE_KEY) match {
+      case Some(s) => s
+      case None => OUTFILE_DEFAULT;
+    }
+    var seedRuns: Option[(Int, Int, Int, Int)] = getIntArg(LEVEL_SEED_RUNS_KEY) match {
+      case None => None
+      case Some(x) => Some(x, levelSeed, 0, 1)
+    }
+    if (seedRuns.isDefined) println("Seed runs activated - doing " + seedRuns.get._1)  
+
+    
     
     val agent: Agent = 
       MWRulesetFileAgent.fromFile(getStringArg(AGENT_FILE_KEY) match {
@@ -120,6 +142,14 @@ object EvaluationTaskRunner {
               x
             }
           }
+
+          val seedParamBase = EvaluationParamsUtil.getSeedParamBase(pd);
+          if (seedParamBase.isDefined && seedRuns.isDefined) {
+            val xSeed = EvaluationParamsUtil.getLevelSeeds(pd, seedParamBase.get, levelSeed, 0, 1)
+        		seedRuns = Some((seedRuns.get._1, xSeed._1, xSeed._2, xSeed._3))            
+          }
+
+          
           ( EvaluationParamsUtil.getBaseLevelOptions(pd, paramLevelBase.get),
             EvaluationParamsUtil.getUpdateLevelOptionsFunction(pd, paramLevelBase.get, numberOfLevelsB),
             EvaluationParamsUtil.getEvaluationMutlipliers(pd, paramMultsBase.get),
@@ -131,31 +161,61 @@ object EvaluationTaskRunner {
         }
       }
     val numberOfLevels: Int = params._4
-    println("Number of levels: " + numberOfLevels + "\n")
+//    println("Number of levels: " + numberOfLevels + "\n")
 
     val baseLevelOptions = params._1
-    println(baseLevelOptions.toString)
+//    println(baseLevelOptions.toString)
     
     val updateOptionsFn = params._2
-//    var opt = baseLevelOptions
-//    for(i <- 0 until numberOfLevels) {
-//      opt = updateOptionsFn(i, opt)
-//      println("" +i+ " iter " + opt.toString)
-//      println
-//    }
+    var opt = baseLevelOptions.clone
+    for(i <- 0 until numberOfLevels) {
+      opt = updateOptionsFn(i, opt)
+      println("" +i+ " iter " + opt.toString)
+      println
+    }
     
     val evals = params._3
     println(evals.toString)
     
       
-
-    
     val task = MWEvaluationTask(numberOfLevels, evals, baseLevelOptions, updateOptionsFn, vis, args.drop(argsDrop))
-                                  .withAgent(agent)
-                                  .withLevelSeed(levelSeed)
-                                  
-    task.evaluate
-    println(task.getStatistics());
+                .withLevelSeed(levelSeed).withAgent(agent)
+
+    if (seedRuns.isDefined) {
+      var prevSeed = seedRuns.get._2; 
+      def memmedTS(g: Int): Int = {
+        val ns = prevSeed + seedRuns.get._3 + (g*seedRuns.get._4)
+        prevSeed = ns
+        ns
+      }
+      var writerOpt: Option[FileWriter] = None;
+      try {
+      	writerOpt = Some(new FileWriter(outfile))
+  			val writer = writerOpt.get
+        
+        for (i <- 0 until seedRuns.get._1) {
+          val seed = memmedTS(i)
+          val fit = task.withLevelSeed(seed).evaluate
+          val all = "~all~ " + i + "," + seed + "," + fit
+          println("Evalled: " + fit + " - LS: " + seed)
+          writer.append(all + "\n")
+        } 
+        
+        writer.flush()
+      } catch {
+        case e: IOException => throw new IllegalArgumentException("File inaccessible or is a folder, or error on flush", e)
+      } finally {
+        if (writerOpt.isDefined) writerOpt.get.close
+      }
+      
+    } else {
+      println("Agent " + agent.getName + "'s ruleset :-")
+      println(agent.asInstanceOf[MWRulesetAgent].ruleset)
+                  
+      task.evaluate
+      println(task.getStatistics());
+    }
+
   }
   
 }

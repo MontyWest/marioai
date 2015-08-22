@@ -70,12 +70,25 @@ object EvaluationParamsUtil {
   val P_STOMP = "stomp"
   
   
+  //SEEDS 
+  val P_SEED = "seed"
+  val P_SEED_START = "start"
+  val P_SEED_ADD = "add"
+  val P_SEED_MULT = "mult"
+  
+  
   def getLevelParamsBase(pd: ParameterDatabase): Option[Parameter] = {
     getParamsBase(pd, P_LEVEL_BASE)
   }
   
   def getMultsParamsBase(pd: ParameterDatabase): Option[Parameter] = {
     getParamsBase(pd, P_MULTS_BASE)
+  }
+  
+  def getSeedParamBase(pd: ParameterDatabase): Option[Parameter] = {
+    val bp = getParamsBase(pd, P_SEED)
+    println("BP: " + bp.isDefined)
+    bp
   }
   
   private def getParamsBase(pd: ParameterDatabase, postfix: String): Option[Parameter] = {
@@ -94,6 +107,13 @@ object EvaluationParamsUtil {
           None
       }
     }
+  }
+  
+  def getLevelSeeds(pd: ParameterDatabase, base: Parameter, dStart: Int, dAdd: Int, dMult: Int): (Int, Int, Int) = {
+    val seedStart = pd.getInt(base.push(P_SEED_START), null, dStart)
+    val seedAdd = pd.getIntWithDefault(base.push(P_SEED_ADD), null, dAdd)
+    val seedMult = pd.getIntWithDefault(base.push(P_SEED_MULT), null, dMult)
+    (seedStart, seedAdd, seedMult)
   }
   
   def getNumberOfLevels(pd: ParameterDatabase, base: Parameter): Option[Int] = {
@@ -229,8 +249,7 @@ object EvaluationParamsUtil {
         timeLimit = innerInt(timeLimit, P_TIME_LIMIT, i)
 //      }
     }
-    
-    
+
     buildUpdateFunction(
       Seq((blocks, blocksFn),
           (cannons, cannonsFn),
@@ -258,17 +277,17 @@ object EvaluationParamsUtil {
   }
   
   private def getIntOption(pd: ParameterDatabase, base: Parameter, key: String): Option[Int] = {        
-    if (pd.exists(base.push(key), null))
+    if (pd.exists(base.push(key), null)) {
       Some(pd.getInt(base.push(key), null))
-    else
+    } else {
       None
+    }
   }
   
   def buildUpdateFunction(
       boolSeq: Seq[(Option[Map[Int,Boolean]], (Boolean, MWLevelOptions) => MWLevelOptions )],
       intSeq: Seq[(Option[Map[Int,Int]], (Int, MWLevelOptions) => MWLevelOptions )]
     ): (Int, MWLevelOptions) => MWLevelOptions = {
-                
       def innerBoolLoop(i: Int, opt: MWLevelOptions, boolSeq:
         Seq[(Option[Map[Int,Boolean]], (Boolean, MWLevelOptions) => MWLevelOptions )]): MWLevelOptions = boolSeq match {
         case Nil => opt
@@ -286,7 +305,7 @@ object EvaluationParamsUtil {
         case Nil => opt
         case (mapOpt, fn) +: tl => mapOpt match {
           case Some(map) => map.get(i) match {
-            case Some(i: Int) => innerIntLoop(i, fn(i, opt), tl)
+            case Some(x: Int) => innerIntLoop(i, fn(x, opt), tl)
             case None => innerIntLoop(i, opt, tl)
           }
           case None => innerIntLoop(i, opt, tl)

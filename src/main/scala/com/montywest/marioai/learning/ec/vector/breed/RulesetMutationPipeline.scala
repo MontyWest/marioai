@@ -8,6 +8,7 @@ import ec.EvolutionState
 import com.montywest.marioai.learning.ec.vector.RulesetSpecies
 import ec.vector.ByteVectorIndividual
 import ec.util.MersenneTwisterFast
+import scala.collection.mutable.WrappedArray
 
 class RulesetMutationPipeline extends BreedingPipeline {
   
@@ -32,7 +33,7 @@ class RulesetMutationPipeline extends BreedingPipeline {
                        thread: Int): Int = {
     
     val source = sources(0)
-    
+        
     val n: Int = source.produce(min, max, start, subpopulation, inds, state, thread)
     
     // Check source of inds, clone if not a breeder

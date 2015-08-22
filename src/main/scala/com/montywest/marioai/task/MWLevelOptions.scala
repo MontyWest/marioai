@@ -73,8 +73,8 @@ class MWLevelOptions(
     return new MWLevelOptions(this.blocks, this.cannons, this.coins, this.deadEnds, this.enemies, this.flatLevel, this.frozenCreatures, this.gaps, this.hiddenBlocks, this.tubes, this.ladders, levelDifficulty, this.levelLength, this.levelType, this.startingMarioMode, this.timeLimit)
   }
   
-  def withLevelLength(levelLength: Int): MWLevelOptions = {
-    return new MWLevelOptions(this.blocks, this.cannons, this.coins, this.deadEnds, this.enemies, this.flatLevel, this.frozenCreatures, this.gaps, this.hiddenBlocks, this.tubes, this.ladders, this.levelDifficulty, levelLength, this.levelType, this.startingMarioMode, this.timeLimit)
+  def withLevelLength(_levelLength: Int): MWLevelOptions = {
+    return new MWLevelOptions(this.blocks, this.cannons, this.coins, this.deadEnds, this.enemies, this.flatLevel, this.frozenCreatures, this.gaps, this.hiddenBlocks, this.tubes, this.ladders, this.levelDifficulty, _levelLength, this.levelType, this.startingMarioMode, this.timeLimit)
   }
   
   def withLevelType(levelType: Int): MWLevelOptions = {
@@ -85,8 +85,8 @@ class MWLevelOptions(
     return new MWLevelOptions(this.blocks, this.cannons, this.coins, this.deadEnds, this.enemies, this.flatLevel, this.frozenCreatures, this.gaps, this.hiddenBlocks, this.tubes, this.ladders, this.levelDifficulty, this.levelLength, this.levelType, startingMarioMode, this.timeLimit)
   }
   
-  def withTimeLimit(timeLimit: Int): MWLevelOptions = {
-    return new MWLevelOptions(this.blocks, this.cannons, this.coins, this.deadEnds, this.enemies, this.flatLevel, this.frozenCreatures, this.gaps, this.hiddenBlocks, this.tubes, this.ladders, this.levelDifficulty, this.levelLength, this.levelType, this.startingMarioMode, timeLimit)
+  def withTimeLimit(_timeLimit: Int): MWLevelOptions = {
+    return new MWLevelOptions(this.blocks, this.cannons, this.coins, this.deadEnds, this.enemies, this.flatLevel, this.frozenCreatures, this.gaps, this.hiddenBlocks, this.tubes, this.ladders, this.levelDifficulty, this.levelLength, this.levelType, this.startingMarioMode, _timeLimit)
   }
   
   override def toString: String = {
