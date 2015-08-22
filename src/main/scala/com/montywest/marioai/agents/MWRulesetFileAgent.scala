@@ -12,6 +12,7 @@ import java.io.FileWriter
 import java.io.IOException
 import com.montywest.marioai.rules.Rule
 import com.montywest.marioai.rules.Conditions
+import java.io.File
 
 
 object MWRulesetFileAgent {
@@ -46,14 +47,20 @@ object MWRulesetFileAgent {
     }
   }
   
-  def toFile(filenameSuffix: String, agent: MWRulesetAgent, header: Boolean): Unit = {
-    val filename = filenameSuffix + postfix
+  def toFile(filename: String, agent: MWRulesetAgent, header: Boolean): Unit = {
+    val filenameFull = if(!filename.contains(".")) {
+      filename + postfix
+    } else filename
+
     val rules = agent.ruleset.rules
     val defaultA = agent.ruleset.defaultAction
     
     var writerOpt: Option[FileWriter] = None;
     try {
-      writerOpt = Some(new FileWriter(writeFolder + filename))
+      val dir: File  = new File(writeFolder);
+      if (!dir.exists()) { dir.mkdirs() }
+      
+      writerOpt = Some(new FileWriter(writeFolder + filenameFull))
       
       val writer = writerOpt.get
       if(header) writer.append(CSV_HEADER + "\n")

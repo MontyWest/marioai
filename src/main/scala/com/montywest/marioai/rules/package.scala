@@ -25,7 +25,7 @@ package object rules {
     
     def validateCondition(cond: (Perception, Byte)): Boolean = cond match {
       case (bp : BoolPerception, b) => (bp.TRUE == b) || (bp.FALSE == b)
-      case (ip : BytePerception, b) => (0 <= b) && (b < ip.limit)
+      case (ip : BytePerception, b) => (0 <= b) && (b <= ip.limit)
     }
     
     def getLimitForIndex(index: Int): Byte = index match {
