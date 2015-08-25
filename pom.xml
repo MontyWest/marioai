@@ -209,7 +209,7 @@
 					</descriptorRefs>
 					<archive>
 						<manifest>
-							<mainClass>com.montywest.marioai.task.EvaluationTaskRunner</mainClass>
+							<mainClass>com.montywest.marioai.Main</mainClass>
 						</manifest>
 					</archive>
 				</configuration>

@@ -1,9 +1,8 @@
 package com.montywest.marioai
 
 import com.montywest.marioai.task.EvaluationTaskRunner
+
 import ec.Evolve
-import com.montywest.marioai.agents.MWRulesetFileAgent
-import com.montywest.marioai.agents.MWReactiveRulesetAgent
 
 object Main extends App {
 

@@ -23,7 +23,7 @@ object EvaluationParamsUtil {
   val P_DEAD_ENDS        = "dead-ends"
   val P_ENEMIES          = "enemies"
   val P_FLAT             = "flat"
-  val P_FROZEN_CREATURES = "frozen"
+  val P_FROZEN_CREATURES = "frozen-enemies"
   val P_GAPS             = "gaps"
   val P_HIDDEN_BLOCKS    = "hidden-blocks"
   val P_TUBES            = "tubes"

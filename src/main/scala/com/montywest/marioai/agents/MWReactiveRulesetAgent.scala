@@ -50,9 +50,9 @@ object MWReactiveRulesetAgent {
         Rule.build(Map(ObstacleAhead -> ObstacleAhead.TRUE, MarioMode -> MarioMode.FIRE, JumpAvailable -> JumpAvailable.FALSE, OnGround -> OnGround.TRUE), Set(KeyLeft)),
         Rule.build(Map(ObstacleAhead -> ObstacleAhead.TRUE, MarioMode -> MarioMode.FIRE), Set(KeyJump, KeyRight, KeySpeed)),
 
-        Rule.build(Map(PitAhead -> PitAhead.TRUE, EnemyUpperRight -> EnemyUpperRight.FALSE, JumpAvailable -> JumpAvailable.TRUE), Set(KeyJump, KeyRight, KeySpeed)),
-        Rule.build(Map(PitAhead -> PitAhead.TRUE, EnemyUpperRight -> EnemyUpperRight.FALSE, JumpAvailable -> JumpAvailable.FALSE, OnGround -> OnGround.TRUE), Set(KeyLeft)),
-        Rule.build(Map(PitAhead -> PitAhead.TRUE, EnemyUpperRight -> EnemyUpperRight.FALSE), Set(KeyJump, KeyRight, KeySpeed)),
+        Rule.build(Map(PitAhead -> PitAhead.CLOSE, EnemyUpperRight -> EnemyUpperRight.FALSE, JumpAvailable -> JumpAvailable.TRUE), Set(KeyJump, KeyRight, KeySpeed)),
+        Rule.build(Map(PitAhead -> PitAhead.CLOSE, EnemyUpperRight -> EnemyUpperRight.FALSE, JumpAvailable -> JumpAvailable.FALSE, OnGround -> OnGround.TRUE), Set(KeyLeft)),
+        Rule.build(Map(PitAhead -> PitAhead.CLOSE, EnemyUpperRight -> EnemyUpperRight.FALSE), Set(KeyJump, KeyRight, KeySpeed)),
         
         Rule.build(Map(PitBelow -> PitBelow.TRUE, EnemyUpperRight -> EnemyUpperRight.FALSE, JumpAvailable -> JumpAvailable.TRUE), Set(KeyJump, KeyRight, KeySpeed)),
         Rule.build(Map(PitBelow -> PitBelow.TRUE, EnemyUpperRight -> EnemyUpperRight.FALSE, JumpAvailable -> JumpAvailable.FALSE, OnGround -> OnGround.TRUE), Set(KeyLeft)),
@@ -60,7 +60,7 @@ object MWReactiveRulesetAgent {
         
         Rule.build(Map(EnemyLowerRight -> EnemyLowerRight.TRUE), Set(KeyLeft)),
         Rule.build(Map(ObstacleAhead -> ObstacleAhead.TRUE), Set(KeyLeft)),
-        Rule.build(Map(PitAhead -> PitAhead.TRUE), Set(KeyLeft)),
+        Rule.build(Map(PitAhead -> PitAhead.CLOSE), Set(KeyLeft)),
         Rule.build(Map(PitBelow -> PitBelow.TRUE), Set(KeyLeft)),
         
         Rule.build(Map(OnGround -> OnGround.TRUE), Set(KeyRight, KeySpeed))

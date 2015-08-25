@@ -1,4 +1,7 @@
-agents/
+agents-old/
+stats/
+runners/
+*.sh
 *.stat
 eval-task.out
 

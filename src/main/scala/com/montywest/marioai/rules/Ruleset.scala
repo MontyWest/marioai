@@ -5,6 +5,11 @@ import scala.collection.mutable.WrappedArray
 
 class Ruleset( val rules: Seq[Rule], val defaultAction: MWAction, favourHigher: Boolean = true) {
 
+  import scala.collection.mutable.Map
+  val ruleUsage: Map[Int, Int] = Map();
+  
+  def length = rules.length
+  
   private val newRuleBetter: (Int, Int) => Boolean = {
     if(favourHigher)
       (best:Int, newScore: Int) => best<newScore
@@ -15,27 +20,26 @@ class Ruleset( val rules: Seq[Rule], val defaultAction: MWAction, favourHigher: 
   def getBestExAction(observation: Observation): ExAction = {
     
     @tailrec
-    def getBestRuleRecu(ls: Seq[Rule], best: Option[Rule] = None, bestScore: Int = 0, index: Int = 0, bestIndex: Option[Int] = None): Option[Rule] = ls match {
-      case Nil => {
-//        val i = bestIndex match {
-//          case None => "def"
-//          case Some(x) => "" + (2*x + 25)
-//        }
-//        println("Rule chosen - " + i)
-        best
-      }
+    def getBestRuleRecu(ls: Seq[Rule], best: Option[(Int, Rule)] = None, bestScore: Int = 0, index: Int = 0): Option[(Int, Rule)] = ls match {
+      case Nil => best
       case (r +: ts) => {
         val newScore = r.scoreAgainst(observation)
         if (newRuleBetter(bestScore, newScore))
-          getBestRuleRecu(ts, Some(r), newScore, index+1, Some(index))
+          getBestRuleRecu(ts, Some((index, r)), newScore, index+1)
         else
-          getBestRuleRecu(ts, best, bestScore, index+1, bestIndex)
+          getBestRuleRecu(ts, best, bestScore, index+1)
       }
     }
     
     getBestRuleRecu(rules) match {
-      case None => ExAction(defaultAction)
-      case Some(r) => r.getExAction
+      case None => {
+        this.incrementRuleUsage(-1)
+        ExAction(defaultAction)
+      }
+      case Some((i,r)) => {
+        this.incrementRuleUsage(i)
+        r.getExAction
+      }
     }
   }
   
@@ -47,10 +51,27 @@ class Ruleset( val rules: Seq[Rule], val defaultAction: MWAction, favourHigher: 
       Vector.fill(Conditions.LENGTH)(-1: Byte) ++ defaultAction
   }
   
+  private def incrementRuleUsage(index: Int): Unit = {
+    ruleUsage.get(index) match {
+      case None => ruleUsage.put(index, 1)
+      case Some(x) => ruleUsage.put(index, x+1)
+    }
+  }
+  
+  def resetRuleUsage = {
+    ruleUsage.clear()
+  }
   
   override def toString: String = {
-    (rules map { r => r.toString() } mkString("\n")) + "\n" +
-    Rule(Vector.fill(Conditions.LENGTH)(-1: Byte) ++ defaultAction).toString()
+    rules.zipWithIndex map { 
+        case (r:Rule, i:Int) => {
+          val sep = if (i<10) " " else ""
+          sep	+ i + ". " + r.toString()
+        }
+      } mkString(
+          "    " + Rule.PRINT_HEADER + "\n",
+          "\n", 
+          "\n-1. " + Rule(Vector.fill(Conditions.LENGTH)(-1: Byte) ++ defaultAction).toString())
   }
 
   override def hashCode: Int =
@@ -66,7 +87,7 @@ class Ruleset( val rules: Seq[Rule], val defaultAction: MWAction, favourHigher: 
 
 
 object Ruleset {
-  
+    
   val FALLBACK_ACTION = MWAction(KeyRight, KeySpeed, KeyJump)
   
   def apply(rules: Seq[Rule], defaultAction: Set[KeyPress]): Ruleset = {

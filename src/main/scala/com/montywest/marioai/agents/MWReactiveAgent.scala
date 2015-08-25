@@ -28,8 +28,8 @@ class MWReactiveAgent extends MWObservationAgent with Agent {
                              
     val jumpNeeded: Boolean = (observation(EnemyLowerRight) == EnemyLowerRight.TRUE) ||
                               (observation(ObstacleAhead) == ObstacleAhead.TRUE) || 
-                              (observation(PitAhead) == PitAhead.TRUE) || 
-                              (observation(PitBelow) == PitAhead.TRUE)
+                              (observation(PitAhead) == PitAhead.CLOSE) || 
+                              (observation(PitBelow) == PitAhead.CLOSE)
     
     val jumpPossible: Boolean = (observation(JumpAvailable) == JumpAvailable.TRUE)
                                 

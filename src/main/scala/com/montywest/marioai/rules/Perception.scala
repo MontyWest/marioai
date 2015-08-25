@@ -89,12 +89,19 @@ case object ObstacleAhead extends BoolPerception(6) {
   }
   
 }
-case object PitAhead extends BoolPerception(7) {
-  val COL_L = 1; val COL_R = 2
+case object PitAhead extends BytePerception(7, 2) {
+  val NONE: Byte = 0; val CLOSE: Byte = 1; val FAR: Byte = 2;
+  val COL_CLOSE_L = 1; val COL_CLOSE_R = 1; val COL_FAR_L = 2; val COL_FAR_R = 2
   
   def apply(environment: Environment): Byte = {
-    if(Perception.pitRelativeToMario(environment, COL_L, COL_R))
-      1 else 0
+    val pitOp: Option[Int] = Perception.getOpens(environment, COL_CLOSE_L, COL_FAR_R).headOption
+    pitOp match {
+      case None => NONE
+      case Some(x) if (x >= COL_CLOSE_L && x <= COL_CLOSE_R) => CLOSE
+      case Some(x) if (x >= COL_FAR_L && x <= COL_FAR_R) => FAR
+      case _ => NONE
+    }
+
   }
   
 }
@@ -240,7 +247,7 @@ object Perception {
     
   }
   
-  private def getOpens(environment: Environment, a: Int, b: Int): List[Int] = {
+  def getOpens(environment: Environment, a: Int, b: Int): List[Int] = {
     val level = environment.getLevelSceneObservationZ(2); //
     val test = (x: Byte) => x == 0 || x == GeneralizerLevelScene.COIN_ANIM;
     val bottomRow = level.length - 1

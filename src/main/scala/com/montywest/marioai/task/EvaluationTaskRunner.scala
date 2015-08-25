@@ -5,7 +5,7 @@ import com.montywest.marioai.agents.MWReactiveAgent
 import com.montywest.marioai.learning.ec.params.EvaluationParamsUtil
 import ec.util.ParameterDatabase
 import com.montywest.marioai.agents.MWReactiveAgent
-import com.montywest.marioai.agents.MWRulesetFileAgent
+import com.montywest.marioai.agents.MWRulesetAgentIO
 import ch.idsia.agents.Agent
 import com.montywest.marioai.agents.MWReactiveAgent
 import com.montywest.marioai.agents.MWRulesetAgent
@@ -39,7 +39,7 @@ object EvaluationTaskRunner {
   val EVAL_MULTS_DEFAULT = MWEvaluationMultipliers.defaultEvaluationMultipliers
   
   val PARAMS_FILE_KEY = "-paramsFile"
-  val PARAMS_FILE_DEFAULT = "params/ruleset-learn.params"
+  val PARAMS_FILE_DEFAULT = "params/vischeck.params"
 
   def run(args: Array[String], vis: Boolean): Unit = {
     var argsDrop = 0;
@@ -88,8 +88,8 @@ object EvaluationTaskRunner {
 
     
     
-    val agent: Agent = 
-      MWRulesetFileAgent.fromFile(getStringArg(AGENT_FILE_KEY) match {
+    val agent: MWRulesetAgent = 
+      MWRulesetAgentIO.fromFile(getStringArg(AGENT_FILE_KEY) match {
         case None => {
           println("Using default agent - ")
           AGENT_FILE_DEFAULT
@@ -98,7 +98,7 @@ object EvaluationTaskRunner {
       })
     println("Agent: " + agent.getName + "\n")
     
-    val numberOfLevelsA = getIntArg(LEVEL_SEED_KEY) match {
+    val numberOfLevelsA = getIntArg(NUMBER_OF_LEVELS_KEY) match {
         case None => {
           println("Using default number of levels - ")
           NUMBER_OF_LEVELS_DEFAULT
@@ -167,21 +167,24 @@ object EvaluationTaskRunner {
 //    println(baseLevelOptions.toString)
     
     val updateOptionsFn = params._2
-    var opt = baseLevelOptions.clone
-    for(i <- 0 until numberOfLevels) {
-      opt = updateOptionsFn(i, opt)
-      println("" +i+ " iter " + opt.toString)
-      println
-    }
+//    var opt = baseLevelOptions.clone
+//    for(i <- 0 until numberOfLevels) {
+//      opt = updateOptionsFn(i, opt)
+//      println("" +i+ " iter " + opt.toString)
+//      println
+//    }
     
     val evals = params._3
-    println(evals.toString)
+//    println(evals.toString)
     
       
     val task = MWEvaluationTask(numberOfLevels, evals, baseLevelOptions, updateOptionsFn, vis, args.drop(argsDrop))
                 .withLevelSeed(levelSeed).withAgent(agent)
 
+    println("Running...")
     if (seedRuns.isDefined) {
+      var fitnessSum = 0
+      
       var prevSeed = seedRuns.get._2; 
       def memmedTS(g: Int): Int = {
         val ns = prevSeed + seedRuns.get._3 + (g*seedRuns.get._4)
@@ -194,12 +197,20 @@ object EvaluationTaskRunner {
   			val writer = writerOpt.get
         
         for (i <- 0 until seedRuns.get._1) {
-          val seed = memmedTS(i)
+          
+          //RUN
+        	val seed = memmedTS(i)
+          agent.resetRuleUsage
           val fit = task.withLevelSeed(seed).evaluate
+          
+          fitnessSum = fitnessSum + fit
           val all = "~all~ " + i + "," + seed + "," + fit
           println("Evalled: " + fit + " - LS: " + seed)
           writer.append(all + "\n")
         } 
+        val avg = fitnessSum.toDouble/seedRuns.get._1.toDouble
+        println("\n\nAverage: " + avg)
+        writer.append("\n\nAverage: " + avg)
         
         writer.flush()
       } catch {
@@ -209,10 +220,20 @@ object EvaluationTaskRunner {
       }
       
     } else {
+      println
+      println("Stats:")
+      println
       println("Agent " + agent.getName + "'s ruleset :-")
-      println(agent.asInstanceOf[MWRulesetAgent].ruleset)
-                  
+      println(agent.ruleset)
       task.evaluate
+      println
+      for (i <- -1 until agent.ruleset.length) {
+    	  agent.ruleset.ruleUsage.get(i) match {
+    	  case None =>
+    	  case Some(n) => println("Rule " + i + " used " + n + " times.")
+    	  }
+      }
+      println
       println(task.getStatistics());
     }
 

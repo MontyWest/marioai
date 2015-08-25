@@ -12,7 +12,7 @@ import com.montywest.marioai.learning.ec.eval.EvolvedAgentRulesetEvaluator
 import com.montywest.marioai.rules.Ruleset
 import com.montywest.marioai.agents.MWRulesetAgent
 import ch.idsia.agents.Agent
-import com.montywest.marioai.agents.MWRulesetFileAgent
+import com.montywest.marioai.agents.MWRulesetAgentIO
 
 class RulesetEvolveStatistics extends Statistics {
 
@@ -80,14 +80,14 @@ class RulesetEvolveStatistics extends Statistics {
     if (bestAgentFilename.isDefined && overallBestIndividual.isDefined) {
       val bestRuleset: Ruleset = Ruleset.buildFromArray(overallBestIndividual.get._2.genome, fallback)
       val bestAgent: MWRulesetAgent = MWRulesetAgent("best-learnt", bestRuleset)
-      MWRulesetFileAgent.toFile(bestAgentFilename.get, bestAgent, true)
+      MWRulesetAgentIO.toFile(bestAgentFilename.get, bestAgent, true)
     }
     
     //Write best and last best to agent files
     if (finalAgentFilename.isDefined && currentBestIndividual.isDefined) {
       val currentRuleset: Ruleset = Ruleset.buildFromArray(currentBestIndividual.get._2.genome, fallback)
       val currentAgent: MWRulesetAgent = MWRulesetAgent("final-learnt", currentRuleset)
-      MWRulesetFileAgent.toFile(finalAgentFilename.get, currentAgent, true)
+      MWRulesetAgentIO.toFile(finalAgentFilename.get, currentAgent, true)
     }
   }
   

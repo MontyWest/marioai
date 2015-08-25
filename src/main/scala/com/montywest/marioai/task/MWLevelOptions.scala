@@ -153,21 +153,30 @@ object MWLevelOptions {
                          200    //timeLimit
                          )
   
-  val compOptions = defaultOptions
   val noUpdate: (Int, MWLevelOptions) => MWLevelOptions = (i: Int, options: MWLevelOptions) => options
   
+  val compNumberOfLevels = 512;
+  val compOptions = defaultOptions
   def compUpdate(levelSeed: Int): (Int, MWLevelOptions) => MWLevelOptions = (i: Int, options: MWLevelOptions) => {
-    options.withLevelLength(Math.max(((200 + (i * 12) + ((levelSeed+i-1) % (i + 1))) % 512), 50))
+    options.withLevelLength(((((i+1) * 431) % levelSeed ) % 462) + 50)
+           .withTimeLimit((options.levelLength * 0.7).toInt)
            .withLevelType(i % 3)
-           .withLevelDifficulty(i/20)
-           .withGaps(i % 3 == 0)
-           .withCannons(i % 3 != 1)
+           .withLevelDifficulty((compNumberOfLevels - i)/32)
+           .withGaps(i % 4 != 2)
+           .withCannons(i % 6 == 2)
+           .withTubes(i % 5 == 1)
            .withCoins(i % 5 != 0)
-           .withBlocks(i % 4 != 0)
-           .withHiddenBlocks(i % 6 != 0)
-           .withDeadEnds(i % 10 == 0)
+           .withBlocks(i % 6 != 2)
+//           .withHiddenBlocks(i % 6 != 0)
+           .withDeadEnds(false)
            .withLadders(i % 10 == 2)
            .withFrozenCreatures(i % 3 == 1)
            .withEnemies(!(i % 4 == 1))
+           .withStartingMarioMode(
+               if (i % 7 == 5 || i % 7 == 1) {
+                 if (i % 2 == 0) 0 
+                 else 1
+               } else 
+                 2)
   }
 }

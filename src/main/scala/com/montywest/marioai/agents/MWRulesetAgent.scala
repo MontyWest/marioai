@@ -12,6 +12,10 @@ class MWRulesetAgent(var name: String, val ruleset: Ruleset) extends MWObservati
   override def getAction: ExAction = {
     ruleset.getBestExAction(observation)
   }
+  
+  def resetRuleUsage = {
+    ruleset.resetRuleUsage
+  }
     
 } 
 

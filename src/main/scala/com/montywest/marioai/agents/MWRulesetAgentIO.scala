@@ -15,7 +15,7 @@ import com.montywest.marioai.rules.Conditions
 import java.io.File
 
 
-object MWRulesetFileAgent {
+object MWRulesetAgentIO {
   
   private val postfix = ".agent"
   private val writeFolder = "agents/written/"

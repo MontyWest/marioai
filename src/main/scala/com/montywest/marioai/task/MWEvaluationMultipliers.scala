@@ -117,7 +117,7 @@ object MWEvaluationMultipliers {
   }
 
   val defaultEvaluationMultipliers = 
-    new MWEvaluationMultipliers(1, 1024, 32, 16, 64, 58, 42, 4, 17, 12, 8, 24, 58, 10)
+    new MWEvaluationMultipliers(1, 2048, 16, 16, 64, 58, 42, 4, 17, 12, 8, 24, 58, 10)
   
   val compEvaluationMulipliers = defaultEvaluationMultipliers
   

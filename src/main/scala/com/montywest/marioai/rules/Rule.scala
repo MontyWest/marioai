@@ -42,7 +42,7 @@ class Rule private[Rule] (vector: Vector[Byte]) {
       case b => b.toString()
     }
     
-    (getConditions.map { b2str } mkString(" ")) + " | " + (getMWAction map { _.toString } mkString(" "))
+    (getConditions.map { b2str } mkString("  ")) + " | " + (getMWAction map { _.toString } mkString("  "))
   }
   
   override def hashCode: Int =
@@ -59,6 +59,8 @@ class Rule private[Rule] (vector: Vector[Byte]) {
 }
 
 object Rule {
+  
+  val PRINT_HEADER = "MM JA OG EL UR LR OA PA PB MX MY| KL KR KJ KS"
   
   val TOTAL_LENGTH = Conditions.LENGTH + MWAction.LENGTH
   

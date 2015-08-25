@@ -13,7 +13,7 @@ seed.3 = 2365
 breed = ec.es.MuPlusLambdaBreeder
 es.mu.0 		= 5
 es.lambda.0 	= 45
-generations 	= 5
+generations 	= 1000
 
 
 # +++ POP +++
@@ -51,8 +51,8 @@ stat.num-children 						= 1
 stat.child.0 							= com.montywest.marioai.learning.ec.stats.RulesetEvolveStatistics
 stat.child.0.gen-file					= ../gen.stat
 stat.child.0.final-file 				= ../final.stat
-stat.child.0.final-agent-file			= final-learnt
-stat.child.0.best-agent-file			= best-learnt
+stat.child.0.final-agent-file			= standard-final
+stat.child.0.best-agent-file			= standard-best
 
 
 # +++ MUTATION +++
@@ -68,9 +68,9 @@ eval.problem							= com.montywest.marioai.learning.ec.eval.EvolvedAgentRulesetE
 #		prev_seed + add + g*mult
 #   where prev_seed is seed_start on g  = 0
 eval.problem.seed						= true
-eval.problem.seed.start					= 2568
-eval.problem.seed.add					= 3
-eval.problem.seed.mult					= 7
+eval.problem.seed.start					= 256844
+eval.problem.seed.add					= 42923
+eval.problem.seed.mult					= 8499374
 
 #	Levels
 eval.problem.level						= true
@@ -83,6 +83,7 @@ eval.problem.level.base.start-mode-num  = 2
 eval.problem.level.base.type-num		= 0
 eval.problem.level.base.length-num		= 200
 eval.problem.level.base.time-limit		= 100
+eval.problem.level.0.frozen-enemies  = true
 eval.problem.level.0.difficulty-num		= 0
 eval.problem.level.0.type-num			= 1
 eval.problem.level.1.type-num			= 0
