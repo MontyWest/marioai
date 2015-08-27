@@ -25,6 +25,8 @@ abstract class MWBasicTask(val name: String, val baseMarioAIOptions: MarioAIOpti
     
   protected def nextLevelSeed(episode: Int, currentSeed: Int): Int
   
+  protected def getBaseLevelSeed: Int
+  
   override def doEpisodes(amount: Int, verbose: Boolean, repetitionsOfSingleEpisode: Int): Unit = {
     @tailrec
     def runSingle(iteration: Int, prevOptions: MWLevelOptions, disqualifications: Int): Int = {
@@ -67,9 +69,10 @@ abstract class MWBasicTask(val name: String, val baseMarioAIOptions: MarioAIOpti
   def getStatistics(): String = {
     val df: DecimalFormat = new DecimalFormat("#.##")
     return  "\n[MarioAI] ~ Evaluation Results for Task - " + localEvaluationInfo.getTaskName() + "\n" +
+            "\n                     Seed : " + this.getBaseLevelSeed +
             "\n                    Agent : " + options.getAgent.getName +
             "\n         Weighted Fitness : " + getFitness +
-            "\n             Mario Status : " + localEvaluationInfo.marioStatus + " of " + numberOfLevels +
+            "\n         Levels Completed : " + localEvaluationInfo.marioStatus + " of " + numberOfLevels +
             "\n               Mario Mode : " + localEvaluationInfo.marioMode +
             "\nCollisions with creatures : " + localEvaluationInfo.collisionsWithCreatures +
             "\n     Passed (Cells, Phys) : " + localEvaluationInfo.distancePassedCells + " of " + localEvaluationInfo.levelLength + ", " + df.format(localEvaluationInfo.distancePassedPhys) + " of " + df.format(localEvaluationInfo.levelLength * 16) + " (" + localEvaluationInfo.distancePassedCells * 100 / localEvaluationInfo.levelLength + "% passed)" +

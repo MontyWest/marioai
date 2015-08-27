@@ -16,6 +16,7 @@ class MWEvaluationTask(val numberOfLevels: Int,
                      marioAIOptions
                    }) with EvaluationTask {
 
+  private var baseLevelSeed: Int = 0;
   
   override def updateOptions(episode: Int, options: MWLevelOptions): MWLevelOptions = updateOptionsFunc(episode, options)
   
@@ -38,12 +39,17 @@ class MWEvaluationTask(val numberOfLevels: Int,
   }
   
   override def withLevelSeed(seed: Int): MWEvaluationTask = {
+    baseLevelSeed = seed
     super.injectLevelSeed(seed, true)
     this
   }
   
   override def getLevelSeed: Int = {
     options.getLevelRandSeed
+  }
+  
+  override def getBaseLevelSeed: Int = {
+    baseLevelSeed
   }
 }
 

@@ -35,7 +35,7 @@ case object MarioMode extends BytePerception(0, 2) {
    *  2 for Fire
    */
   def apply(environment: Environment): Byte = {
-    min( max(environment.getMarioStatus(), 0), limit-1).toByte
+    min( max(environment.getMarioMode(), 0), limit-1).toByte
   }
 }
 case object JumpAvailable extends BoolPerception(1) {

@@ -13,6 +13,7 @@ import com.montywest.marioai.learning.ec.eval.EvolvedAgentRulesetEvaluator
 import java.io.IOException
 import java.io.FileWriter
 import com.montywest.marioai.rules.Rule
+import com.montywest.marioai.agents.MWHumanAgent
 
 object EvaluationTaskRunner {
   
@@ -29,6 +30,7 @@ object EvaluationTaskRunner {
   val NUMBER_OF_LEVELS_DEFAULT = 20;
   
   val AGENT_FILE_KEY = "-agent"
+  val AGENT_HUMAN = "human"
   val AGENT_FILE_DEFAULT = "agents/forward-jumping.agent"
   
   val PARAMS_KEY = "-params"
@@ -88,14 +90,11 @@ object EvaluationTaskRunner {
 
     
     
-    val agent: MWRulesetAgent = 
-      MWRulesetAgentIO.fromFile(getStringArg(AGENT_FILE_KEY) match {
-        case None => {
-          println("Using default agent - ")
-          AGENT_FILE_DEFAULT
-        }
-        case Some(s) => s
-      })
+    val agent: Agent = getStringArg(AGENT_FILE_KEY) match {
+      case Some(AGENT_HUMAN) => new MWHumanAgent();
+      case Some(s) => MWRulesetAgentIO.fromFile(s)
+      case None => MWRulesetAgentIO.fromFile(AGENT_FILE_DEFAULT)
+    }
     println("Agent: " + agent.getName + "\n")
     
     val numberOfLevelsA = getIntArg(NUMBER_OF_LEVELS_KEY) match {
@@ -200,7 +199,7 @@ object EvaluationTaskRunner {
           
           //RUN
         	val seed = memmedTS(i)
-          agent.resetRuleUsage
+          agent match {case a: MWRulesetAgent => a.resetRuleUsage; case _ =>}
           val fit = task.withLevelSeed(seed).evaluate
           
           fitnessSum = fitnessSum + fit
@@ -224,15 +223,17 @@ object EvaluationTaskRunner {
       println("Stats:")
       println
       println("Agent " + agent.getName + "'s ruleset :-")
-      println(agent.ruleset)
+      agent match {case a: MWRulesetAgent => println(a.ruleset); case _ =>}
       task.evaluate
       println
-      for (i <- -1 until agent.ruleset.length) {
-    	  agent.ruleset.ruleUsage.get(i) match {
-    	  case None =>
-    	  case Some(n) => println("Rule " + i + " used " + n + " times.")
-    	  }
-      }
+      agent match {case a: MWRulesetAgent => {
+        for (i <- -1 until a.ruleset.length) {
+      	  a.ruleset.ruleUsage.get(i) match {
+      	  case None =>
+      	  case Some(n) => println("Rule " + i + " used " + n + " times.")
+      	  }
+        }
+      }; case _ =>}
       println
       println(task.getStatistics());
     }

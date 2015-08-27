@@ -73,6 +73,8 @@ class RulesetSpecies extends DynamicParameterIntegerVectorSpecies {
       //Get favoured byte from params, if not found then get from dynamic params class
       val b: Byte = {
         if (state.parameters.exists(base.push(RulesetSpecies.P_FAVOUR_BYTE), default.push(RulesetSpecies.P_FAVOUR_BYTE))) {
+          state.parameters.getInt(base.push(RulesetSpecies.P_FAVOUR_BYTE), default.push(RulesetSpecies.P_FAVOUR_BYTE)).toByte
+        } else {
     			dynamicParamsClassOpt match {
       			case Some(p: RulesetParams) => {
       				p.getIndexType(index) match {
@@ -85,7 +87,7 @@ class RulesetSpecies extends DynamicParameterIntegerVectorSpecies {
               -1
       			}
     			}
-    		} else state.parameters.getInt(base.push(RulesetSpecies.P_FAVOUR_BYTE), default.push(RulesetSpecies.P_FAVOUR_BYTE)).toByte
+    		}
       }
       
       //Get favour probability from params file

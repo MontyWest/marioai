@@ -37,6 +37,7 @@ class Ruleset( val rules: Seq[Rule], val defaultAction: MWAction, favourHigher: 
         ExAction(defaultAction)
       }
       case Some((i,r)) => {
+//        println("Used rule  -:-  " + i)
         this.incrementRuleUsage(i)
         r.getExAction
       }
