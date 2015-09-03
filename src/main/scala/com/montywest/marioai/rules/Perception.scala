@@ -3,6 +3,9 @@ package com.montywest.marioai.rules
 import ch.idsia.benchmark.mario.environments.Environment
 import ch.idsia.benchmark.mario.engine.GeneralizerLevelScene
 import Math.{min, max}
+import scala.language.implicitConversions
+import scala.language.postfixOps
+
 import com.montywest.marioai.util.PrintUtils
 
 abstract sealed class Perception(val index: Int) {
@@ -35,7 +38,7 @@ case object MarioMode extends BytePerception(0, 2) {
    *  2 for Fire
    */
   def apply(environment: Environment): Byte = {
-    min( max(environment.getMarioMode(), 0), limit-1).toByte
+    min( max(environment.getMarioMode(), 0), limit).toByte
   }
 }
 case object JumpAvailable extends BoolPerception(1) {
@@ -134,9 +137,8 @@ case object MovingX extends BytePerception(9, 2) {
       case _ => 0
     }
   }
-  
-
 }
+
 case object MovingY extends BytePerception(10, 2) {
   
   val STILL: Byte = 0; val DOWN: Byte = 1; val UP: Byte = 2;
@@ -153,7 +155,6 @@ case object MovingY extends BytePerception(10, 2) {
       case _ => 0
     }
   }
-  
 }
 
 
@@ -247,6 +248,31 @@ object Perception {
     
   }
   
+  def pitRelativeToMario(environment: Environment, a: Int, b: Int): Boolean = {
+    val opens = this.getOpens(environment, a, b)
+    !opens.isEmpty
+  }
+  
+  
+  private def checkBox(grid: Array[Array[Byte]], test: (Array[Array[Byte]], (Int, Int))=>Boolean, mario: (Int, Int), a: (Int, Int), b: (Int, Int), ret: Boolean = true): Boolean = {
+    import Math.min
+    import Math.max
+    
+    val relARow = min(grid.length-1, max(0, (a._1 + mario._1)))
+    val relACol = min(grid(0).length-1, max(0, (a._2 + mario._2)))
+    val relBRow = min(grid.length-1, max(0, (b._1 + mario._1)))
+    val relBCol = min(grid(0).length-1, max(0, (b._2 + mario._2)))
+    
+    for {
+      i <- min(relARow, relBRow) to max(relARow, relBRow)
+      j <- min(relACol, relBCol) to max(relARow, relBCol)
+      if (test(grid, (i, j)))
+    }{
+        return ret
+    }
+    !ret
+  }
+  
   def getOpens(environment: Environment, a: Int, b: Int): List[Int] = {
     val level = environment.getLevelSceneObservationZ(2); //
     val test = (x: Byte) => x == 0 || x == GeneralizerLevelScene.COIN_ANIM;
@@ -270,36 +296,12 @@ object Perception {
     opens.map { x => x - mario._2 }
   }
   
-  def pitRelativeToMario(environment: Environment, a: Int, b: Int): Boolean = {
-    val opens = this.getOpens(environment, a, b)
-    !opens.isEmpty
+  private def obs(b: Byte): Boolean = {
+    b == 1 || b == GeneralizerLevelScene.BORDER_CANNOT_PASS_THROUGH
   }
   
   private def getMarioPos(environment: Environment): (Int, Int) = {
     val marioPos = environment.getMarioEgoPos;
     (marioPos(EGO_POS_ROW_INDEX), marioPos(EGO_POS_COL_INDEX))
-  }
-  
-  private def checkBox(grid: Array[Array[Byte]], test: (Array[Array[Byte]], (Int, Int))=>Boolean, mario: (Int, Int), a: (Int, Int), b: (Int, Int), ret: Boolean = true): Boolean = {
-    import Math.min
-    import Math.max
-    
-    val relARow = min(grid.length-1, max(0, (a._1 + mario._1)))
-    val relACol = min(grid(0).length-1, max(0, (a._2 + mario._2)))
-    val relBRow = min(grid.length-1, max(0, (b._1 + mario._1)))
-    val relBCol = min(grid(0).length-1, max(0, (b._2 + mario._2)))
-    
-    for {
-      i <- min(relARow, relBRow) to max(relARow, relBRow)
-      j <- min(relACol, relBCol) to max(relARow, relBCol)
-      if (test(grid, (i, j)))
-    }{
-        return ret
-    }
-    !ret
-  }
-  
-  def obs(b: Byte): Boolean = {
-    b == 1 || b == GeneralizerLevelScene.BORDER_CANNOT_PASS_THROUGH
   }
 }

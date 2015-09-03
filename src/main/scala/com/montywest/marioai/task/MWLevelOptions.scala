@@ -10,7 +10,7 @@ class MWLevelOptions(
     val enemies: Boolean,
     val flatLevel: Boolean,
     val frozenCreatures: Boolean,
-    val gaps: Boolean,
+    val pits: Boolean,
     val hiddenBlocks: Boolean,
     val tubes: Boolean,
     val ladders: Boolean,
@@ -22,71 +22,71 @@ class MWLevelOptions(
 ) {
   
   override def clone: MWLevelOptions = {
-    new MWLevelOptions(this.blocks, this.cannons, this.coins, this.deadEnds, this.enemies, this.flatLevel, this.frozenCreatures, this.gaps, this.hiddenBlocks, this.tubes, this.ladders, this.levelDifficulty, this.levelLength, this.levelType, this.startingMarioMode, this.timeLimit)
+    new MWLevelOptions(this.blocks, this.cannons, this.coins, this.deadEnds, this.enemies, this.flatLevel, this.frozenCreatures, this.pits, this.hiddenBlocks, this.tubes, this.ladders, this.levelDifficulty, this.levelLength, this.levelType, this.startingMarioMode, this.timeLimit)
   }
   
   def withBlocks(blocks: Boolean): MWLevelOptions = {
-    return new MWLevelOptions(blocks, this.cannons, this.coins, this.deadEnds, this.enemies, this.flatLevel, this.frozenCreatures, this.gaps, this.hiddenBlocks, this.tubes, this.ladders, this.levelDifficulty, this.levelLength, this.levelType, this.startingMarioMode, this.timeLimit)
+    return new MWLevelOptions(blocks, this.cannons, this.coins, this.deadEnds, this.enemies, this.flatLevel, this.frozenCreatures, this.pits, this.hiddenBlocks, this.tubes, this.ladders, this.levelDifficulty, this.levelLength, this.levelType, this.startingMarioMode, this.timeLimit)
   }
   
   def withCannons(cannons: Boolean): MWLevelOptions = {
-    return new MWLevelOptions(this.blocks, cannons, this.coins, this.deadEnds, this.enemies, this.flatLevel, this.frozenCreatures, this.gaps, this.hiddenBlocks, this.tubes, this.ladders, this.levelDifficulty, this.levelLength, this.levelType, this.startingMarioMode, this.timeLimit)
+    return new MWLevelOptions(this.blocks, cannons, this.coins, this.deadEnds, this.enemies, this.flatLevel, this.frozenCreatures, this.pits, this.hiddenBlocks, this.tubes, this.ladders, this.levelDifficulty, this.levelLength, this.levelType, this.startingMarioMode, this.timeLimit)
   }
   
   def withCoins(coins: Boolean): MWLevelOptions = {
-    return new MWLevelOptions(this.blocks, this.cannons, coins, this.deadEnds, this.enemies, this.flatLevel, this.frozenCreatures, this.gaps, this.hiddenBlocks, this.tubes, this.ladders, this.levelDifficulty, this.levelLength, this.levelType, this.startingMarioMode, this.timeLimit)
+    return new MWLevelOptions(this.blocks, this.cannons, coins, this.deadEnds, this.enemies, this.flatLevel, this.frozenCreatures, this.pits, this.hiddenBlocks, this.tubes, this.ladders, this.levelDifficulty, this.levelLength, this.levelType, this.startingMarioMode, this.timeLimit)
   }
   
   def withDeadEnds(deadEnds: Boolean): MWLevelOptions = {
-    return new MWLevelOptions(this.blocks, this.cannons, this.coins, deadEnds, this.enemies, this.flatLevel, this.frozenCreatures, this.gaps, this.hiddenBlocks, this.tubes, this.ladders, this.levelDifficulty, this.levelLength, this.levelType, this.startingMarioMode, this.timeLimit)
+    return new MWLevelOptions(this.blocks, this.cannons, this.coins, deadEnds, this.enemies, this.flatLevel, this.frozenCreatures, this.pits, this.hiddenBlocks, this.tubes, this.ladders, this.levelDifficulty, this.levelLength, this.levelType, this.startingMarioMode, this.timeLimit)
   }
   
   def withEnemies(enemies: Boolean): MWLevelOptions = {
-    return new MWLevelOptions(this.blocks, this.cannons, this.coins, this.deadEnds, enemies, this.flatLevel, this.frozenCreatures, this.gaps, this.hiddenBlocks, this.tubes, this.ladders, this.levelDifficulty, this.levelLength, this.levelType, this.startingMarioMode, this.timeLimit)
+    return new MWLevelOptions(this.blocks, this.cannons, this.coins, this.deadEnds, enemies, this.flatLevel, this.frozenCreatures, this.pits, this.hiddenBlocks, this.tubes, this.ladders, this.levelDifficulty, this.levelLength, this.levelType, this.startingMarioMode, this.timeLimit)
   }
   
   def withFlatLevel(flatLevel: Boolean): MWLevelOptions = {
-    return new MWLevelOptions(this.blocks, this.cannons, this.coins, this.deadEnds, this.enemies, flatLevel, this.frozenCreatures, this.gaps, this.hiddenBlocks, this.tubes, this.ladders, this.levelDifficulty, this.levelLength, this.levelType, this.startingMarioMode, this.timeLimit)
+    return new MWLevelOptions(this.blocks, this.cannons, this.coins, this.deadEnds, this.enemies, flatLevel, this.frozenCreatures, this.pits, this.hiddenBlocks, this.tubes, this.ladders, this.levelDifficulty, this.levelLength, this.levelType, this.startingMarioMode, this.timeLimit)
   }
   
   def withFrozenCreatures(frozenCreatures: Boolean): MWLevelOptions = {
-    return new MWLevelOptions(this.blocks, this.cannons, this.coins, this.deadEnds, this.enemies, this.flatLevel, frozenCreatures, this.gaps, this.hiddenBlocks, this.tubes, this.ladders, this.levelDifficulty, this.levelLength, this.levelType, this.startingMarioMode, this.timeLimit)
+    return new MWLevelOptions(this.blocks, this.cannons, this.coins, this.deadEnds, this.enemies, this.flatLevel, frozenCreatures, this.pits, this.hiddenBlocks, this.tubes, this.ladders, this.levelDifficulty, this.levelLength, this.levelType, this.startingMarioMode, this.timeLimit)
   }
   
-  def withGaps(gaps: Boolean): MWLevelOptions = {
-    return new MWLevelOptions(this.blocks, this.cannons, this.coins, this.deadEnds, this.enemies, this.flatLevel, this.frozenCreatures, gaps, this.hiddenBlocks, this.tubes, this.ladders, this.levelDifficulty, this.levelLength, this.levelType, this.startingMarioMode, this.timeLimit)
+  def withPits(pits: Boolean): MWLevelOptions = {
+    return new MWLevelOptions(this.blocks, this.cannons, this.coins, this.deadEnds, this.enemies, this.flatLevel, this.frozenCreatures, pits, this.hiddenBlocks, this.tubes, this.ladders, this.levelDifficulty, this.levelLength, this.levelType, this.startingMarioMode, this.timeLimit)
   }
   
   def withHiddenBlocks(hiddenBlocks: Boolean): MWLevelOptions = {
-    return new MWLevelOptions(this.blocks, this.cannons, this.coins, this.deadEnds, this.enemies, this.flatLevel, this.frozenCreatures, this.gaps, hiddenBlocks, this.tubes, this.ladders, this.levelDifficulty, this.levelLength, this.levelType, this.startingMarioMode, this.timeLimit)
+    return new MWLevelOptions(this.blocks, this.cannons, this.coins, this.deadEnds, this.enemies, this.flatLevel, this.frozenCreatures, this.pits, hiddenBlocks, this.tubes, this.ladders, this.levelDifficulty, this.levelLength, this.levelType, this.startingMarioMode, this.timeLimit)
   }
   
   def withTubes(tubes: Boolean): MWLevelOptions = {
-    return new MWLevelOptions(this.blocks, this.cannons, this.coins, this.deadEnds, this.enemies, this.flatLevel, this.frozenCreatures, this.gaps, this.hiddenBlocks, tubes, this.ladders, this.levelDifficulty, this.levelLength, this.levelType, this.startingMarioMode, this.timeLimit)
+    return new MWLevelOptions(this.blocks, this.cannons, this.coins, this.deadEnds, this.enemies, this.flatLevel, this.frozenCreatures, this.pits, this.hiddenBlocks, tubes, this.ladders, this.levelDifficulty, this.levelLength, this.levelType, this.startingMarioMode, this.timeLimit)
   }
   
   def withLadders(ladders: Boolean): MWLevelOptions = {
-    return new MWLevelOptions(this.blocks, this.cannons, this.coins, this.deadEnds, this.enemies, this.flatLevel, this.frozenCreatures, this.gaps, this.hiddenBlocks, this.tubes, ladders, this.levelDifficulty, this.levelLength, this.levelType, this.startingMarioMode, this.timeLimit)
+    return new MWLevelOptions(this.blocks, this.cannons, this.coins, this.deadEnds, this.enemies, this.flatLevel, this.frozenCreatures, this.pits, this.hiddenBlocks, this.tubes, ladders, this.levelDifficulty, this.levelLength, this.levelType, this.startingMarioMode, this.timeLimit)
   }
   
   def withLevelDifficulty(levelDifficulty: Int): MWLevelOptions = {
-    return new MWLevelOptions(this.blocks, this.cannons, this.coins, this.deadEnds, this.enemies, this.flatLevel, this.frozenCreatures, this.gaps, this.hiddenBlocks, this.tubes, this.ladders, levelDifficulty, this.levelLength, this.levelType, this.startingMarioMode, this.timeLimit)
+    return new MWLevelOptions(this.blocks, this.cannons, this.coins, this.deadEnds, this.enemies, this.flatLevel, this.frozenCreatures, this.pits, this.hiddenBlocks, this.tubes, this.ladders, levelDifficulty, this.levelLength, this.levelType, this.startingMarioMode, this.timeLimit)
   }
   
   def withLevelLength(_levelLength: Int): MWLevelOptions = {
-    return new MWLevelOptions(this.blocks, this.cannons, this.coins, this.deadEnds, this.enemies, this.flatLevel, this.frozenCreatures, this.gaps, this.hiddenBlocks, this.tubes, this.ladders, this.levelDifficulty, _levelLength, this.levelType, this.startingMarioMode, this.timeLimit)
+    return new MWLevelOptions(this.blocks, this.cannons, this.coins, this.deadEnds, this.enemies, this.flatLevel, this.frozenCreatures, this.pits, this.hiddenBlocks, this.tubes, this.ladders, this.levelDifficulty, _levelLength, this.levelType, this.startingMarioMode, this.timeLimit)
   }
   
   def withLevelType(levelType: Int): MWLevelOptions = {
-    return new MWLevelOptions(this.blocks, this.cannons, this.coins, this.deadEnds, this.enemies, this.flatLevel, this.frozenCreatures, this.gaps, this.hiddenBlocks, this.tubes, this.ladders, this.levelDifficulty, this.levelLength, levelType, this.startingMarioMode, this.timeLimit)
+    return new MWLevelOptions(this.blocks, this.cannons, this.coins, this.deadEnds, this.enemies, this.flatLevel, this.frozenCreatures, this.pits, this.hiddenBlocks, this.tubes, this.ladders, this.levelDifficulty, this.levelLength, levelType, this.startingMarioMode, this.timeLimit)
   }
   
   def withStartingMarioMode(startingMarioMode: Int): MWLevelOptions = {
-    return new MWLevelOptions(this.blocks, this.cannons, this.coins, this.deadEnds, this.enemies, this.flatLevel, this.frozenCreatures, this.gaps, this.hiddenBlocks, this.tubes, this.ladders, this.levelDifficulty, this.levelLength, this.levelType, startingMarioMode, this.timeLimit)
+    return new MWLevelOptions(this.blocks, this.cannons, this.coins, this.deadEnds, this.enemies, this.flatLevel, this.frozenCreatures, this.pits, this.hiddenBlocks, this.tubes, this.ladders, this.levelDifficulty, this.levelLength, this.levelType, startingMarioMode, this.timeLimit)
   }
   
   def withTimeLimit(_timeLimit: Int): MWLevelOptions = {
-    return new MWLevelOptions(this.blocks, this.cannons, this.coins, this.deadEnds, this.enemies, this.flatLevel, this.frozenCreatures, this.gaps, this.hiddenBlocks, this.tubes, this.ladders, this.levelDifficulty, this.levelLength, this.levelType, this.startingMarioMode, _timeLimit)
+    return new MWLevelOptions(this.blocks, this.cannons, this.coins, this.deadEnds, this.enemies, this.flatLevel, this.frozenCreatures, this.pits, this.hiddenBlocks, this.tubes, this.ladders, this.levelDifficulty, this.levelLength, this.levelType, this.startingMarioMode, _timeLimit)
   }
   
   override def toString: String = {
@@ -98,7 +98,7 @@ class MWLevelOptions(
      "  enemies: " + enemies + "\n" +
      "  flatLevel: " + flatLevel + "\n" +
      "  frozenCreatures: " + frozenCreatures + "\n" +
-     "  gaps: " + gaps + "\n" +
+     "  gaps: " + pits + "\n" +
      "  hiddenBlocks: " + hiddenBlocks + "\n" +
      "  tubes: " + tubes + "\n" +
      "  ladders: " + ladders + "\n" +
@@ -121,7 +121,7 @@ object MWLevelOptions {
     marioAIOptions.setEnemies(if(levelOptions.enemies) "" else "off")
     marioAIOptions.setFlatLevel(levelOptions.flatLevel)
     marioAIOptions.setFrozenCreatures(levelOptions.frozenCreatures)
-    marioAIOptions.setGapsCount(levelOptions.gaps)
+    marioAIOptions.setGapsCount(levelOptions.pits)
     marioAIOptions.setHiddenBlocksCount(levelOptions.hiddenBlocks)
     marioAIOptions.setTubesCount(levelOptions.tubes)
     marioAIOptions.setLevelLadder(levelOptions.ladders)
@@ -158,11 +158,12 @@ object MWLevelOptions {
   val compNumberOfLevels = 512;
   val compOptions = defaultOptions
   def compUpdate(levelSeed: Int): (Int, MWLevelOptions) => MWLevelOptions = (i: Int, options: MWLevelOptions) => {
-    options.withLevelLength(((((i+1) * 431) % levelSeed ) % 462) + 50)
+//    println("Prev ll; " + options.levelLength)
+    options.withLevelLength(((((i+levelSeed) * 431) % (501+levelSeed) ) % 462) + 50)
            .withTimeLimit((options.levelLength * 0.7).toInt)
            .withLevelType(i % 3)
            .withLevelDifficulty((compNumberOfLevels - i)/32)
-           .withGaps(i % 4 != 2)
+           .withPits(i % 4 != 2)
            .withCannons(i % 6 == 2)
            .withTubes(i % 5 == 1)
            .withCoins(i % 5 != 0)

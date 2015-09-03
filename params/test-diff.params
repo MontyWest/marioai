@@ -1,12 +1,13 @@
 level.base.dead-ends 		= false
 level.base.enemies			= true
 level.base.cannons			= false
+level.base.tubes			= false
 level.base.start-mode-num  	= 2
 level.base.type-num			= 0
 level.base.length-num		= 256
 level.base.time-limit		= 190
 
-level.base.difficulty-num	= 4
+level.base.difficulty-num	= 5
 
 
 level						= true

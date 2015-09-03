@@ -42,10 +42,10 @@ pop.subpop.0.species.condition.mutation-prob 			= 0.05
 pop.subpop.0.species.condition.favour_byte 				= -1
 pop.subpop.0.species.condition.favour_probability 		= 0.5
 
-pop.subpop.0.species.condition.0.max-gene				= -1
-pop.subpop.0.species.condition.0.min-gene				= -1
-pop.subpop.0.species.condition.0.mutation-prob			= 0.0
-# pop.subpop.0.species.condition.0.favour_probability 	= 0.9
+# pop.subpop.0.species.condition.0.max-gene				= -1
+# pop.subpop.0.species.condition.0.min-gene				= -1
+# pop.subpop.0.species.condition.0.mutation-prob			= 0.0
+pop.subpop.0.species.condition.0.favour_probability 	= 0.95
 
 # pop.subpop.0.species.condition.3.max-gene				= -1
 # pop.subpop.0.species.condition.3.min-gene				= -1
@@ -61,10 +61,10 @@ pop.subpop.0.species.action.mutation-prob 				= 0.09
 # +++ STATS +++
 stat.num-children 						= 1
 stat.child.0 							= com.montywest.marioai.learning.ec.stats.RulesetEvolveStatistics
-stat.child.0.gen-file					= ../smm-gen.stat
-stat.child.0.final-file 				= ../smm-final.stat
-stat.child.0.final-agent-file			= smm-final
-stat.child.0.best-agent-file			= smm-best
+stat.child.0.gen-file					= ../lmm-lel-gen.stat
+stat.child.0.final-file 				= ../lmm-lel-final.stat
+stat.child.0.final-agent-file			= lmm-lel-final
+stat.child.0.best-agent-file			= lmm-lel-best
 
 
 # +++ MUTATION +++

@@ -1,6 +1,8 @@
 package com.montywest.marioai.rules
 
 import scala.annotation.tailrec
+import scala.language.implicitConversions
+import scala.language.postfixOps
 import scala.collection.mutable.WrappedArray
 
 class Ruleset( val rules: Seq[Rule], val defaultAction: MWAction, favourHigher: Boolean = true) {
@@ -30,14 +32,12 @@ class Ruleset( val rules: Seq[Rule], val defaultAction: MWAction, favourHigher: 
           getBestRuleRecu(ts, best, bestScore, index+1)
       }
     }
-    
     getBestRuleRecu(rules) match {
       case None => {
         this.incrementRuleUsage(-1)
         ExAction(defaultAction)
       }
       case Some((i,r)) => {
-//        println("Used rule  -:-  " + i)
         this.incrementRuleUsage(i)
         r.getExAction
       }
@@ -53,6 +53,7 @@ class Ruleset( val rules: Seq[Rule], val defaultAction: MWAction, favourHigher: 
   }
   
   private def incrementRuleUsage(index: Int): Unit = {
+//    println("Rule used: " + index)
     ruleUsage.get(index) match {
       case None => ruleUsage.put(index, 1)
       case Some(x) => ruleUsage.put(index, x+1)

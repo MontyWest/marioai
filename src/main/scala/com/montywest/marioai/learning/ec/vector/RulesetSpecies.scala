@@ -26,8 +26,8 @@ class RulesetSpecies extends DynamicParameterIntegerVectorSpecies {
     super.setup(state, base)
   }
   
-  override def dynamicParameterOverride(state: EvolutionState, base: Parameter, default: Parameter): Unit = {
-    super.dynamicParameterOverride(state, base, default)
+  override def prePrototypeSetup(state: EvolutionState, base: Parameter, default: Parameter): Unit = {
+    super.prePrototypeSetup(state, base, default)
 
     val dpc = dynamicParamsClassOpt match {
         case Some(p) => p match {
@@ -52,13 +52,19 @@ class RulesetSpecies extends DynamicParameterIntegerVectorSpecies {
     
     if(state.parameters.exists(base.push(RulesetSpecies.P_CONDITION), default.push(RulesetSpecies.P_CONDITION))) {
       dpc.runOnIndexes(Condition, genomeSize){
-        (x: Int) => loadParametersForGene(state, x, base.push(RulesetSpecies.P_CONDITION), default.push(RulesetSpecies.P_CONDITION), "")
+        (x: Int, mod: Int) => {
+          loadParametersForGene(state, x, base.push(RulesetSpecies.P_CONDITION), default.push(RulesetSpecies.P_CONDITION), "")
+          loadParametersForGene(state, x, base.push(RulesetSpecies.P_CONDITION).push(""+mod), default.push(RulesetSpecies.P_CONDITION).push(""+mod), "")
+        }
       }
     }
     
     if(state.parameters.exists(base.push(RulesetSpecies.P_ACTION), default.push(RulesetSpecies.P_ACTION))) {
       dpc.runOnIndexes(Action, genomeSize){
-        (x: Int) => loadParametersForGene(state, x, base.push(RulesetSpecies.P_ACTION), default.push(RulesetSpecies.P_ACTION), "")
+        (x: Int, mod: Int) => {
+          loadParametersForGene(state, x, base.push(RulesetSpecies.P_ACTION), default.push(RulesetSpecies.P_ACTION), "")
+          loadParametersForGene(state, x, base.push(RulesetSpecies.P_ACTION).push(""+mod), default.push(RulesetSpecies.P_ACTION).push(""+mod), "")
+        }
       }
     }
   }

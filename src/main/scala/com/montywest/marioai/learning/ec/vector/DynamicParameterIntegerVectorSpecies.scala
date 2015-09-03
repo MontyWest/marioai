@@ -1,6 +1,6 @@
 package com.montywest.marioai.learning.ec.vector
 
-import com.montywest.marioai.learning.ec.DynamicSpeciesParameters
+import com.montywest.marioai.learning.ec.params.DynamicSpeciesParameters
 import scala.annotation.tailrec
 import ec.EvolutionState
 import ec.vector.VectorSpecies
@@ -34,7 +34,7 @@ class DynamicParameterIntegerVectorSpecies extends IntegerVectorSpecies {
     super.setup(state, base)
   }
   
-  override def dynamicParameterOverride(state: EvolutionState, base: Parameter, default: Parameter): Unit = {
+  override def prePrototypeSetup(state: EvolutionState, base: Parameter, default: Parameter): Unit = {
        
     if (dynamicParamsClassOpt.isDefined) {
       val dynamicParamsClass = dynamicParamsClassOpt.get
@@ -96,7 +96,7 @@ class DynamicParameterIntegerVectorSpecies extends IntegerVectorSpecies {
       }
     }
     
-    super.dynamicParameterOverride(state, base, default)
+    super.prePrototypeSetup(state, base, default)
   }
   
   private def dynamicGenomeByModuloIndices(state: EvolutionState, dynamicParamsClass: DynamicSpeciesParameters, moduloNum: Int): Unit = {

@@ -20,8 +20,11 @@ class RulesetEvolveStatistics extends Statistics {
   var finalLog: Int = 0
   var bestAgentFilename: Option[String] = None
   var finalAgentFilename: Option[String] = None
+  var diffAgentFilename: Option[String] = None
   var overallBestIndividual: Option[(Int, ByteVectorIndividual)] = None
   var currentBestIndividual: Option[(Int, ByteVectorIndividual)] = None
+  var biggestDiffIndividual: Option[(Int, Double, ByteVectorIndividual)] = None
+
   private var milliCheckpoint: Long = System.currentTimeMillis();
   
   override def setup(state: EvolutionState, base: Parameter): Unit = {
@@ -64,6 +67,15 @@ class RulesetEvolveStatistics extends Statistics {
       }
     }
     
+    diffAgentFilename = {
+      val str = state.parameters.getStringWithDefault(base.push(P_DIFF_AGENT_FILE), null, "")
+      if (str == "") {
+        None
+      } else {
+        Some(str)
+      }
+    }
+    
     
     milliCheckpoint = System.currentTimeMillis()
   }
@@ -81,6 +93,14 @@ class RulesetEvolveStatistics extends Statistics {
       val bestRuleset: Ruleset = Ruleset.buildFromArray(overallBestIndividual.get._2.genome, fallback)
       val bestAgent: MWRulesetAgent = MWRulesetAgent("best-learnt", bestRuleset)
       MWRulesetAgentIO.toFile(bestAgentFilename.get, bestAgent, true)
+      state.output.println("Best Agent Generation: " + overallBestIndividual.get._1.toString, finalLog)
+    }
+    
+    if (diffAgentFilename.isDefined && biggestDiffIndividual.isDefined) {
+      val diffRuleset: Ruleset = Ruleset.buildFromArray(biggestDiffIndividual.get._3.genome, fallback)
+      val diffAgent: MWRulesetAgent = MWRulesetAgent("diff-learnt", diffRuleset)
+      MWRulesetAgentIO.toFile(diffAgentFilename.get, diffAgent, true)
+      state.output.println("Diff Agent Generation: " + biggestDiffIndividual.get._1.toString, finalLog)
     }
     
     //Write best and last best to agent files
@@ -89,6 +109,7 @@ class RulesetEvolveStatistics extends Statistics {
       val currentAgent: MWRulesetAgent = MWRulesetAgent("final-learnt", currentRuleset)
       MWRulesetAgentIO.toFile(finalAgentFilename.get, currentAgent, true)
     }
+    
   }
   
   override def postEvaluationStatistics(state: EvolutionState): Unit = {
@@ -163,6 +184,17 @@ class RulesetEvolveStatistics extends Statistics {
          }
          case None => overallBestIndividual = Some(genNum, bestInd.get)
        }
+       
+       if (genNum > 0.75*state.numGenerations) {
+         biggestDiffIndividual match {
+           case Some((_: Int, diff: Double, bvi: ByteVectorIndividual)) => {
+             if ((bestScore - avScore) >= diff) {
+               biggestDiffIndividual = Some(genNum, bestScore - avScore, bestInd.get)
+             }
+           }
+           case None => biggestDiffIndividual = Some(genNum, bestScore - avScore, bestInd.get)
+         }
+       }
      }
   } 
 }
@@ -174,4 +206,5 @@ object RulesetEvolveStatistics {
   val P_FINALFILE = "final-file"
   val P_FINAL_AGENT_FILE = "final-agent-file"
   val P_BEST_AGENT_FILE = "best-agent-file"
+  val P_DIFF_AGENT_FILE = "diff-agent-file"
 }

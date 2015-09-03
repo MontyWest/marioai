@@ -3,5 +3,32 @@ cMM,cJA,cOG,cEL,cEUR,cELR,cOA,cPA,cPB,cMX,cMY,aL,aR,aJ,aS
 -1 ,-1 ,-1 ,-1 ,-1  ,-1  ,-1 ,-1 ,-1 ,-1 ,-1 ,0 ,1 ,1 ,1
 
 
-CompScore(52)	:  	1840974 - 	125/512
-LearnScore(52)	:  	33703   -   2/20
+Agent forward-jumping's ruleset :-
+    MM JA OG EL UR LR OA PA PB MX MY| KL KR KJ KS
+ 0. _  0  1  _  _  _  _  _  _  _  _ | 0  1  0  0
+-1. _  _  _  _  _  _  _  _  _  _  _ | 0  1  1  1
+
+Rule -1 used 81925 times.
+Rule 0 used 6090 times.
+
+
+[MarioAI] ~ Evaluation Results for Task - MWMainPlayTask
+
+                     Seed : 1000
+                    Agent : forward-jumping
+         Weighted Fitness : 924220
+         Levels Completed : 70 of 512
+               Mario Mode : 523
+Collisions with creatures : 415
+     Passed (Cells, Phys) : 36183 of 136362, 583009 of 2181792 (26% passed)
+ Time Spent(marioseconds) : 5665
+  Time Left(marioseconds) : 8909
+             Coins Gained : 3646 of 55553 (6% collected)
+      Hidden Blocks Found : 0 of 0 (0% found)
+       Mushrooms Devoured : 0 of 12 found (0% collected)
+         Flowers Devoured : 2 of 114 found (1% collected)
+              Kills Total : 703 of 17880 found (3%)
+            Kills By Fire : 384
+           Kills By Shell : 7
+           Kills By Stomp : 309
+        Disqualifications : 0

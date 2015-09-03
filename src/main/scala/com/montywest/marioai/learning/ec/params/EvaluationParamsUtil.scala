@@ -1,7 +1,7 @@
 package com.montywest.marioai.learning.ec.params
 
 import com.montywest.marioai.task.MWLevelOptions
-import ec.util.ParameterDatabase
+import ec.util.ParameterDatabaseInf
 import ec.util.Parameter
 import java.util.regex.Pattern
 import com.montywest.marioai.task.MWEvaluationMultipliers
@@ -24,7 +24,7 @@ object EvaluationParamsUtil {
   val P_ENEMIES          = "enemies"
   val P_FLAT             = "flat"
   val P_FROZEN_CREATURES = "frozen-enemies"
-  val P_GAPS             = "gaps"
+  val P_PITS             = "pits"
   val P_HIDDEN_BLOCKS    = "hidden-blocks"
   val P_TUBES            = "tubes"
   val P_DIFFICULTY       = "difficulty-num"
@@ -40,7 +40,7 @@ object EvaluationParamsUtil {
   val enemiesFn = (b: Boolean, opt: MWLevelOptions) => opt.withEnemies(b)
   val flatLevelFn = (b: Boolean, opt: MWLevelOptions) => opt.withFlatLevel(b)
   val frozenFn = (b: Boolean, opt: MWLevelOptions) => opt.withFrozenCreatures(b)
-  val gapsFn = (b: Boolean, opt: MWLevelOptions) => opt.withGaps(b)
+  val pitsFn = (b: Boolean, opt: MWLevelOptions) => opt.withPits(b)
   val hiddenBlocksFn = (b: Boolean, opt: MWLevelOptions) => opt.withHiddenBlocks(b)
   val tubesFn = (b: Boolean, opt: MWLevelOptions) => opt.withTubes(b)
   
@@ -77,21 +77,20 @@ object EvaluationParamsUtil {
   val P_SEED_MULT = "mult"
   
   
-  def getLevelParamsBase(pd: ParameterDatabase): Option[Parameter] = {
+  def getLevelParamsBase(pd: ParameterDatabaseInf): Option[Parameter] = {
     getParamsBase(pd, P_LEVEL_BASE)
   }
   
-  def getMultsParamsBase(pd: ParameterDatabase): Option[Parameter] = {
+  def getMultsParamsBase(pd: ParameterDatabaseInf): Option[Parameter] = {
     getParamsBase(pd, P_MULTS_BASE)
   }
   
-  def getSeedParamBase(pd: ParameterDatabase): Option[Parameter] = {
+  def getSeedParamBase(pd: ParameterDatabaseInf): Option[Parameter] = {
     val bp = getParamsBase(pd, P_SEED)
-    println("BP: " + bp.isDefined)
     bp
   }
   
-  private def getParamsBase(pd: ParameterDatabase, postfix: String): Option[Parameter] = {
+  private def getParamsBase(pd: ParameterDatabaseInf, postfix: String): Option[Parameter] = {
     val evalBase = new Parameter("eval").push("problem").push(postfix)
     if (pd.exists(evalBase, null)) 
       Some(evalBase)
@@ -109,21 +108,21 @@ object EvaluationParamsUtil {
     }
   }
   
-  def getLevelSeeds(pd: ParameterDatabase, base: Parameter, dStart: Int, dAdd: Int, dMult: Int): (Int, Int, Int) = {
-    val seedStart = pd.getInt(base.push(P_SEED_START), null, dStart)
+  def getLevelSeeds(pd: ParameterDatabaseInf, base: Parameter, dStart: Int, dAdd: Int, dMult: Int): (Int, Int, Int) = {
+    val seedStart = pd.getIntWithDefault(base.push(P_SEED_START), null, dStart)
     val seedAdd = pd.getIntWithDefault(base.push(P_SEED_ADD), null, dAdd)
     val seedMult = pd.getIntWithDefault(base.push(P_SEED_MULT), null, dMult)
     (seedStart, seedAdd, seedMult)
   }
   
-  def getNumberOfLevels(pd: ParameterDatabase, base: Parameter): Option[Int] = {
+  def getNumberOfLevels(pd: ParameterDatabaseInf, base: Parameter): Option[Int] = {
     if (pd.exists(base.push(P_NUM_OF_LEVELS), null))
-    	Some(pd.getInt(base.push(P_NUM_OF_LEVELS), null))
+    	Some(pd.getInt(base.push(P_NUM_OF_LEVELS), null, 1))
     else
     	None
   }
   
-  def getEvaluationMutlipliers(pd: ParameterDatabase, base: Parameter): MWEvaluationMultipliers = {
+  def getEvaluationMutlipliers(pd: ParameterDatabaseInf, base: Parameter): MWEvaluationMultipliers = {
     def innerLoop(opt: MWEvaluationMultipliers, vec: Seq[(String, (Int, MWEvaluationMultipliers) => MWEvaluationMultipliers)]): MWEvaluationMultipliers = vec match  {
       case Nil => opt
       case (key: String, fn: ((Int, MWEvaluationMultipliers) => MWEvaluationMultipliers)) +: tl => {        
@@ -151,7 +150,7 @@ object EvaluationParamsUtil {
   }
   
 
-  def getBaseLevelOptions(pd: ParameterDatabase, preBase: Parameter): MWLevelOptions = {
+  def getBaseLevelOptions(pd: ParameterDatabaseInf, preBase: Parameter): MWLevelOptions = {
     val base = preBase.push(P_BASE_OPTIONS);
     
     def innerBoolLoop(opt: MWLevelOptions, vec: Seq[(String, (Boolean, MWLevelOptions) => MWLevelOptions)]): MWLevelOptions = vec match  {
@@ -176,7 +175,7 @@ object EvaluationParamsUtil {
               (P_ENEMIES, enemiesFn),
               (P_FLAT, flatLevelFn),
               (P_FROZEN_CREATURES, frozenFn),
-              (P_GAPS, gapsFn),
+              (P_PITS, pitsFn),
               (P_HIDDEN_BLOCKS, hiddenBlocksFn),
               (P_TUBES, tubesFn))
       )
@@ -191,7 +190,7 @@ object EvaluationParamsUtil {
     )
   }
   
-  def getUpdateLevelOptionsFunction(pd: ParameterDatabase, base: Parameter, numberOfLevels: Int): (Int, MWLevelOptions) => MWLevelOptions = {
+  def getUpdateLevelOptionsFunction(pd: ParameterDatabaseInf, base: Parameter, numberOfLevels: Int): (Int, MWLevelOptions) => MWLevelOptions = {
     
     def innerBool(mapOpt: Option[Map[Int,Boolean]], key: String, i: Int) = {
       getBooleanOption(pd, base.push(""+i), key) match {
@@ -220,7 +219,7 @@ object EvaluationParamsUtil {
     var enemies: Option[Map[Int,Boolean]] = None
     var flatLevel: Option[Map[Int,Boolean]] = None
     var frozenCreatues: Option[Map[Int,Boolean]] = None
-    var gaps: Option[Map[Int,Boolean]] = None
+    var pits: Option[Map[Int,Boolean]] = None
     var hiddenBlocks: Option[Map[Int,Boolean]] = None
     var tubes: Option[Map[Int,Boolean]] = None
     var levelDifficulty: Option[Map[Int,Int]] = None
@@ -239,7 +238,7 @@ object EvaluationParamsUtil {
         enemies = innerBool(enemies, P_ENEMIES, i)
         flatLevel = innerBool(flatLevel, P_FLAT, i)
         frozenCreatues = innerBool(frozenCreatues, P_FROZEN_CREATURES, i)
-        gaps = innerBool(gaps, P_GAPS, i)
+        pits = innerBool(pits, P_PITS, i)
         hiddenBlocks = innerBool(hiddenBlocks, P_HIDDEN_BLOCKS, i)
         tubes = innerBool(tubes, P_TUBES, i)
         levelDifficulty = innerInt(levelDifficulty, P_DIFFICULTY, i)
@@ -258,7 +257,7 @@ object EvaluationParamsUtil {
           (enemies, enemiesFn),
           (flatLevel, flatLevelFn),
           (frozenCreatues, frozenFn),
-          (gaps, gapsFn),
+          (pits, pitsFn),
           (hiddenBlocks, hiddenBlocksFn),
           (tubes, tubesFn)),
       Seq((levelDifficulty, difficultyFn),
@@ -269,16 +268,16 @@ object EvaluationParamsUtil {
     )
   }
   
-  private def getBooleanOption(pd: ParameterDatabase, base: Parameter, key: String): Option[Boolean] = {
+  private def getBooleanOption(pd: ParameterDatabaseInf, base: Parameter, key: String): Option[Boolean] = {
     if (pd.exists(base.push(key), null))
       Some(pd.getBoolean(base.push(key), null, false))
     else
       None
   }
   
-  private def getIntOption(pd: ParameterDatabase, base: Parameter, key: String): Option[Int] = {        
+  private def getIntOption(pd: ParameterDatabaseInf, base: Parameter, key: String): Option[Int] = {        
     if (pd.exists(base.push(key), null)) {
-      Some(pd.getInt(base.push(key), null))
+      Some(pd.getIntWithDefault(base.push(key), null, 0))
     } else {
       None
     }

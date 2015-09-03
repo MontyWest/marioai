@@ -8,7 +8,16 @@ import java.text.DecimalFormat
 import scala.annotation.tailrec
 import ch.idsia.agents.Agent
 
-abstract class MWBasicTask(val name: String, val baseMarioAIOptions: MarioAIOptions) extends BasicTask(baseMarioAIOptions) with Task {
+abstract class MWBasicTask(val name: String,
+                           val baseLevelOptions: MWLevelOptions,
+                           val updateOptionsFunc: (Int, MWLevelOptions) => MWLevelOptions,
+                           val visualisation: Boolean, 
+                           val args: Array[String]) 
+                               extends BasicTask({
+                                         val marioAIOptions = new MarioAIOptions(args)
+                                         marioAIOptions.setVisualization(visualisation)
+                                         marioAIOptions
+                                       }) with Task {
 
   val localEvaluationInfo = new EvaluationInfo();
   var disqualifications = 0;
@@ -18,12 +27,12 @@ abstract class MWBasicTask(val name: String, val baseMarioAIOptions: MarioAIOpti
   def getFitness: Int = localEvaluationInfo.computeWeightedFitness()
   
   def numberOfLevels: Int
+      
+  protected def updateOptions(episode: Int, options: MWLevelOptions): MWLevelOptions = updateOptionsFunc(episode, options)
   
-  protected def baseLevelOptions: MWLevelOptions
-  
-  protected def updateOptions(episode: Int, options: MWLevelOptions): MWLevelOptions
-    
-  protected def nextLevelSeed(episode: Int, currentSeed: Int): Int
+  protected def nextLevelSeed(episode: Int, lastSeed: Int) =  {
+    (3*episode) + lastSeed
+  }
   
   protected def getBaseLevelSeed: Int
   
@@ -90,27 +99,31 @@ abstract class MWBasicTask(val name: String, val baseMarioAIOptions: MarioAIOpti
   }
   
   protected def updateLocalEvaluationInfo(evInfo: EvaluationInfo) = {
-    localEvaluationInfo.distancePassedCells += evInfo.distancePassedCells;
-    localEvaluationInfo.distancePassedPhys += evInfo.distancePassedPhys;
-    localEvaluationInfo.flowersDevoured += evInfo.flowersDevoured;
-    localEvaluationInfo.killsTotal += evInfo.killsTotal;
-    localEvaluationInfo.killsByFire += evInfo.killsByFire;
-    localEvaluationInfo.killsByShell += evInfo.killsByShell;
-    localEvaluationInfo.killsByStomp += evInfo.killsByStomp;
-    localEvaluationInfo.marioMode += evInfo.marioMode;
-    localEvaluationInfo.marioStatus += evInfo.marioStatus;
-    localEvaluationInfo.mushroomsDevoured += evInfo.mushroomsDevoured;
-    localEvaluationInfo.coinsGained += evInfo.coinsGained;
-    localEvaluationInfo.timeLeft += evInfo.timeLeft;
-    localEvaluationInfo.timeSpent += evInfo.timeSpent;
-    localEvaluationInfo.hiddenBlocksFound += evInfo.hiddenBlocksFound;
-    localEvaluationInfo.totalNumberOfCoins += evInfo.totalNumberOfCoins;
-    localEvaluationInfo.totalNumberOfCreatures += evInfo.totalNumberOfCreatures;
-    localEvaluationInfo.totalNumberOfFlowers += evInfo.totalNumberOfFlowers;
-    localEvaluationInfo.totalNumberOfMushrooms += evInfo.totalNumberOfMushrooms;
-    localEvaluationInfo.totalNumberOfHiddenBlocks += evInfo.totalNumberOfHiddenBlocks;
-    localEvaluationInfo.collisionsWithCreatures += evInfo.collisionsWithCreatures;
-    localEvaluationInfo.levelLength += evInfo.levelLength;
+    try {
+      localEvaluationInfo.distancePassedCells += evInfo.distancePassedCells;
+      localEvaluationInfo.distancePassedPhys += evInfo.distancePassedPhys;
+      localEvaluationInfo.flowersDevoured += evInfo.flowersDevoured;
+      localEvaluationInfo.killsTotal += evInfo.killsTotal;
+      localEvaluationInfo.killsByFire += evInfo.killsByFire;
+      localEvaluationInfo.killsByShell += evInfo.killsByShell;
+      localEvaluationInfo.killsByStomp += evInfo.killsByStomp;
+      localEvaluationInfo.marioMode += evInfo.marioMode;
+      localEvaluationInfo.marioStatus += evInfo.marioStatus;
+      localEvaluationInfo.mushroomsDevoured += evInfo.mushroomsDevoured;
+      localEvaluationInfo.coinsGained += evInfo.coinsGained;
+      localEvaluationInfo.timeLeft += evInfo.timeLeft;
+      localEvaluationInfo.timeSpent += evInfo.timeSpent;
+      localEvaluationInfo.hiddenBlocksFound += evInfo.hiddenBlocksFound;
+      localEvaluationInfo.totalNumberOfCoins += evInfo.totalNumberOfCoins;
+      localEvaluationInfo.totalNumberOfCreatures += evInfo.totalNumberOfCreatures;
+      localEvaluationInfo.totalNumberOfFlowers += evInfo.totalNumberOfFlowers;
+      localEvaluationInfo.totalNumberOfMushrooms += evInfo.totalNumberOfMushrooms;
+      localEvaluationInfo.totalNumberOfHiddenBlocks += evInfo.totalNumberOfHiddenBlocks;
+      localEvaluationInfo.collisionsWithCreatures += evInfo.collisionsWithCreatures;
+      localEvaluationInfo.levelLength += evInfo.levelLength;
+    } catch {
+      case e: NullPointerException => throw new RuntimeException("Strikes again! lei: " + (localEvaluationInfo != null) + " eei: " + (evInfo != null), e)
+    }
   }
   
   protected def resetLocalEvaluationInfo = {

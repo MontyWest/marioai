@@ -3,10 +3,10 @@ parent.0 = @ec.es.ESDefaults es.params
 #General
 breedthreads 	= 4
 evalthreads 	= 1
-seed.0 = 1
-seed.1 = 909
-seed.2 = 499311
-seed.3 = 90032
+seed.0 = 8399
+seed.1 = 200993
+seed.2 = 32
+seed.3 = 46627
 
 
 # +++ ES +++
@@ -38,14 +38,14 @@ pop.subpop.0.species.dynamic-param-class = com.montywest.marioai.learning.ec.par
 
 #	Condition params
 pop.subpop.0.species.condition							= true
-pop.subpop.0.species.condition.mutation-prob 			= 0.05
+pop.subpop.0.species.condition.mutation-prob 			= 0.09
 pop.subpop.0.species.condition.favour_byte 				= -1
-pop.subpop.0.species.condition.favour_probability 		= 0.5
+pop.subpop.0.species.condition.favour_probability 		= 0.6
 
-pop.subpop.0.species.condition.0.max-gene				= -1
-pop.subpop.0.species.condition.0.min-gene				= -1
-pop.subpop.0.species.condition.0.mutation-prob			= 0.0
-# pop.subpop.0.species.condition.0.favour_probability 	= 0.9
+# pop.subpop.0.species.condition.0.max-gene				= -1
+# pop.subpop.0.species.condition.0.min-gene				= -1
+# pop.subpop.0.species.condition.0.mutation-prob			= 0.0
+pop.subpop.0.species.condition.0.favour_probability 	= 0.93
 
 # pop.subpop.0.species.condition.3.max-gene				= -1
 # pop.subpop.0.species.condition.3.min-gene				= -1
@@ -61,10 +61,11 @@ pop.subpop.0.species.action.mutation-prob 				= 0.09
 # +++ STATS +++
 stat.num-children 						= 1
 stat.child.0 							= com.montywest.marioai.learning.ec.stats.RulesetEvolveStatistics
-stat.child.0.gen-file					= ../smm-gen.stat
-stat.child.0.final-file 				= ../smm-final.stat
-stat.child.0.final-agent-file			= smm-final
-stat.child.0.best-agent-file			= smm-best
+stat.child.0.gen-file					= ../lall-2-gen.stat
+stat.child.0.final-file 				= ../lall-2-final.stat
+stat.child.0.final-agent-file			= lall-2-final
+stat.child.0.best-agent-file			= lall-2-best
+stat.child.0.diff-agent-file			= lall-2-diff
 
 
 # +++ MUTATION +++
@@ -80,9 +81,9 @@ eval.problem							= com.montywest.marioai.learning.ec.eval.EvolvedAgentRulesetE
 #		prev_seed + add + g*mult
 #   where prev_seed is seed_start on g  = 0
 eval.problem.seed						= true
-eval.problem.seed.start					= 3348
-eval.problem.seed.add					= 284839
-eval.problem.seed.mult					= 2568849
+eval.problem.seed.start					= 588839
+eval.problem.seed.add					= 347
+eval.problem.seed.mult					= 8888534
 
 #	Levels
 eval.problem.level						= true
@@ -133,6 +134,6 @@ eval.problem.mults.time-left			= 2
 #	Fallback Action
 eval.problem.fallback-action			= true
 eval.problem.fallback-action.right		= true
-eval.problem.fallback-action.speed		= true
+eval.problem.fallback-action.speed		= false
 
 

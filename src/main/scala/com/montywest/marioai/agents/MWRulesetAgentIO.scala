@@ -13,6 +13,7 @@ import java.io.IOException
 import com.montywest.marioai.rules.Rule
 import com.montywest.marioai.rules.Conditions
 import java.io.File
+import scala.language.postfixOps
 
 
 object MWRulesetAgentIO {

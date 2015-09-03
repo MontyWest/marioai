@@ -69,7 +69,7 @@ class RuleTest extends FlatSpec with Matchers with MockFactory with BeforeAndAft
     assert(!action(Mario.KEY_SPEED))
   }
   
-    "build" should "take set of actions and create rule that gives correct the MWActions instance" in {
+  "build" should "take set of actions and create rule that gives correct the MWActions instance" in {
     val action = Rule.build(Map.empty, 
                       Set(KeyLeft, KeyJump)).getMWAction
     

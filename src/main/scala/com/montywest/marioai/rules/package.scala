@@ -1,5 +1,8 @@
 package com.montywest.marioai
 
+import scala.language.implicitConversions
+
+
 package object rules {
   
 	type Observation = Vector[Byte]
@@ -26,6 +29,16 @@ package object rules {
     def validateCondition(cond: (Perception, Byte)): Boolean = cond match {
       case (bp : BoolPerception, b) => (bp.TRUE == b) || (bp.FALSE == b)
       case (ip : BytePerception, b) => (0 <= b) && (b <= ip.limit)
+    }
+    
+    def validateConditions(conditionsVector: Vector[Byte]): Boolean = {
+      conditionsVector.zipWithIndex.forall {
+        case (b, Perception(perception)) => perception match {
+          case boolP : BoolPerception => (b == boolP.TRUE) || (b == boolP.FALSE) || (b == DONT_CARE)
+          case byteP : BytePerception => ((0 <= b) && (b <= byteP.limit)) || (b == DONT_CARE)
+        }
+        case _ => false 
+      }
     }
     
     def getLimitForIndex(index: Int): Byte = index match {

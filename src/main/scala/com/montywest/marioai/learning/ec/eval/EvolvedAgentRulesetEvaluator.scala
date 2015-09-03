@@ -93,7 +93,10 @@ class EvolvedAgentRulesetEvaluator extends Problem with SimpleProblemForm {
         }
       }
     } catch {
-      case e: Exception => state.output.fatal("Exception thrown in evaluator: " + e + " " + e.getMessage + " " + e.getStackTraceString)
+      case e: Exception => {
+    	  e.printStackTrace()
+        state.output.fatal("Exception thrown in evaluator: " + e + " " + e.getMessage)
+      }
     }
     
   }

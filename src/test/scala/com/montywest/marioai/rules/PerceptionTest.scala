@@ -22,7 +22,7 @@ class PerceptionTest extends FlatSpec with Matchers with MockFactory with Before
   
   "MarioMode apply" should "return 0 for small Mario" in {
     
-    (envStub.getMarioStatus _) when() returns(0)
+    (envStub.getMarioMode _) when() returns(0)
     
     assertResult(0: Byte) {
       MarioMode(envStub)
@@ -32,7 +32,7 @@ class PerceptionTest extends FlatSpec with Matchers with MockFactory with Before
   
   "MarioMode apply" should "return 1 for Large Mario" in {
     
-    (envStub.getMarioStatus _) when() returns(1)
+    (envStub.getMarioMode _) when() returns(1)
     
     assertResult(1: Byte) {
       MarioMode(envStub)
@@ -42,7 +42,7 @@ class PerceptionTest extends FlatSpec with Matchers with MockFactory with Before
   
   "MarioMode apply" should "return 2 for FIRE Mario" in {
     
-    (envStub.getMarioStatus _) when() returns(2)
+    (envStub.getMarioMode _) when() returns(2)
     
     assertResult(2: Byte) {
       MarioMode(envStub)
@@ -123,7 +123,7 @@ class PerceptionTest extends FlatSpec with Matchers with MockFactory with Before
   }
   
   "MovingY apply" should "return 1 for moving down" in {
-    (envStub.getMarioMovement _) when() returns(Array(-1, -1))
+    (envStub.getMarioMovement _) when() returns(Array(-1, 1))
     
     assertResult(1: Byte) {
       MovingY(envStub)
@@ -132,7 +132,7 @@ class PerceptionTest extends FlatSpec with Matchers with MockFactory with Before
   }
   
   "MovingY apply" should "return 2 for moving up" in {
-    (envStub.getMarioMovement _) when() returns(Array(0, 1))
+    (envStub.getMarioMovement _) when() returns(Array(0, -1))
     
     assertResult(2: Byte) {
       MovingY(envStub)
@@ -250,12 +250,22 @@ class PerceptionTest extends FlatSpec with Matchers with MockFactory with Before
     }
   }
   
-  "PitAhead apply" should "return 1 if there is a pit in range ahead of mario" in {
-    val pitCols = Set(2, 3);
+  "PitAhead apply" should "return 1 if there is a pit in close range ahead of mario" in {
+    val pitCols = Set(1, 2, 3);
     (envStub.getLevelSceneObservationZ _) when(*) returns(EnvironmentFixtures.getLevelSceneWithPit(1, pitCols))
     (envStub.getMarioEgoPos _) when() returns(Array(EnvironmentFixtures.mario._1, EnvironmentFixtures.mario._2))
 
     assertResult(1: Byte) {
+      PitAhead(envStub)
+    }
+  }
+  
+  "PitAhead apply" should "return 2 if there is a pit in range but not close ahead of mario" in {
+    val pitCols = Set(2, 3, 4);
+    (envStub.getLevelSceneObservationZ _) when(*) returns(EnvironmentFixtures.getLevelSceneWithPit(1, pitCols))
+    (envStub.getMarioEgoPos _) when() returns(Array(EnvironmentFixtures.mario._1, EnvironmentFixtures.mario._2))
+
+    assertResult(2: Byte) {
       PitAhead(envStub)
     }
   }

@@ -5,3 +5,43 @@ cMM,cJA,cOG,cEL,cEUR,cELR,cOA,cPA,cPB,cMX,cMY,aL,aR,aJ,aS
 -1 ,-1 ,-1 ,-1 ,-1  ,-1  ,-1 , 1 ,-1 ,-1 ,-1 ,0 ,1 ,1 ,1
 -1 ,-1 ,-1 ,-1 ,-1  ,-1  ,-1 ,-1 , 1 ,-1 ,-1 ,0 ,1 ,1 ,1
 -1 ,-1 ,-1 ,-1 ,-1  ,-1  ,-1 ,-1 ,-1 ,-1 ,-1 ,0 ,1 ,0 ,0
+
+
+
+Agent simple-reactive's ruleset :-
+    MM JA OG EL UR LR OA PA PB MX MY| KL KR KJ KS
+ 0. _  0  1  _  _  _  _  _  _  _  _ | 0  1  0  0
+ 1. _  _  _  _  _  1  _  _  _  _  _ | 0  1  1  0
+ 2. _  _  _  _  _  _  1  _  _  _  _ | 0  1  1  0
+ 3. _  _  _  _  _  _  _  1  _  _  _ | 0  1  1  1
+ 4. _  _  _  _  _  _  _  _  1  _  _ | 0  1  1  1
+-1. _  _  _  _  _  _  _  _  _  _  _ | 0  1  0  0
+
+Rule -1 used 72166 times.
+Rule 0 used 10205 times.
+Rule 1 used 7500 times.
+Rule 2 used 43517 times.
+Rule 3 used 15507 times.
+Rule 4 used 1550 times.
+
+
+[MarioAI] ~ Evaluation Results for Task - MWMainPlayTask
+
+                     Seed : 1000
+                    Agent : simple-reactive
+         Weighted Fitness : 1077888
+         Levels Completed : 86 of 512
+               Mario Mode : 425
+Collisions with creatures : 553
+     Passed (Cells, Phys) : 43374 of 136362, 697711 of 2181792 (31% passed)
+ Time Spent(marioseconds) : 9835
+  Time Left(marioseconds) : 10104
+             Coins Gained : 4559 of 55553 (8% collected)
+      Hidden Blocks Found : 0 of 0 (0% found)
+       Mushrooms Devoured : 0 of 23 found (0% collected)
+         Flowers Devoured : 1 of 89 found (1% collected)
+              Kills Total : 576 of 17880 found (3%)
+            Kills By Fire : 111
+           Kills By Shell : 10
+           Kills By Stomp : 455
+        Disqualifications : 0

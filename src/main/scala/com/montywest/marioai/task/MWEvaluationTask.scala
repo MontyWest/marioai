@@ -4,22 +4,15 @@ import ch.idsia.tools.MarioAIOptions
 import ch.idsia.agents.Agent
 
 class MWEvaluationTask(val numberOfLevels: Int, 
-                 val evalValues: MWEvaluationMultipliers, 
-                 val baseLevelOptions: MWLevelOptions, 
-                 val updateOptionsFunc: (Int, MWLevelOptions) => MWLevelOptions, 
-                 val visualisation: Boolean, 
-                 val args: Array[String])
-                 
-                   extends MWBasicTask("MWMainPlayTask", {
-                     val marioAIOptions = new MarioAIOptions(args)
-                     marioAIOptions.setVisualization(visualisation)
-                     marioAIOptions
-                   }) with EvaluationTask {
+                       val evalValues: MWEvaluationMultipliers, 
+                       override val baseLevelOptions: MWLevelOptions, 
+                       override val updateOptionsFunc: (Int, MWLevelOptions) => MWLevelOptions, 
+                       override val visualisation: Boolean, 
+                       override val args: Array[String])
+                           extends MWBasicTask("MWMainPlayTask", baseLevelOptions, updateOptionsFunc, visualisation, args) with EvaluationTask {
 
   private var baseLevelSeed: Int = 0;
-  
-  override def updateOptions(episode: Int, options: MWLevelOptions): MWLevelOptions = updateOptionsFunc(episode, options)
-  
+    
   override def nextLevelSeed(episode: Int, lastSeed: Int) =  {
     (3*episode) + lastSeed
   }

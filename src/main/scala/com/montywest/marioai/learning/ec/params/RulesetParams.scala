@@ -1,6 +1,5 @@
 package com.montywest.marioai.learning.ec.params
 
-import com.montywest.marioai.learning.ec.DynamicSpeciesParameters
 import com.montywest.marioai.rules._
 
 class RulesetParams extends DynamicSpeciesParameters {
@@ -14,18 +13,18 @@ class RulesetParams extends DynamicSpeciesParameters {
     case _ => Action
   } 
   
-  def runOnIndexes(indexType: IndexType, indexLimit: Int)(op: Int=>Unit): Unit =  indexType match {
+  def runOnIndexes(indexType: IndexType, indexLimit: Int)(op: (Int,Int)=>Unit): Unit =  indexType match {
     case Condition => {
       for (
         i <- 0 until indexLimit by ruleLength;
         j <- 0 until conditionLength
-      ){op(i+j)}
+      ){op(i+j,j)}
     }
     case Action => {
       for(
         i <- 0 until indexLimit by ruleLength;
         j <- conditionLength until ruleLength
-      ){op(i+j)}
+      ){op(i+j,j-conditionLength)}
     }
   }
   

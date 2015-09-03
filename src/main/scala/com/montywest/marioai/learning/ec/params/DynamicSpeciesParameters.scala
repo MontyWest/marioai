@@ -1,4 +1,4 @@
-package com.montywest.marioai.learning.ec
+package com.montywest.marioai.learning.ec.params
 
 abstract class DynamicSpeciesParameters {
 

@@ -1,5 +1,6 @@
 package com.montywest.marioai.task
 
+import scala.language.implicitConversions
 import ch.idsia.benchmark.tasks.SystemOfValues
 
 class MWEvaluationMultipliers(

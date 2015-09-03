@@ -1,0 +1,24 @@
+level.base.dead-ends 		= false
+level.base.enemies			= true
+level.base.cannons			= false
+level.base.start-mode-num  	= 2
+level.base.type-num			= 0
+level.base.length-num		= 256
+level.base.time-limit		= 190
+
+level.base.difficulty-num	= 7
+
+
+level						= true
+level.num-levels			= 1
+
+mults						= true
+mults.distance				= 1
+mults.win					= 1024
+mults.mode					= 32
+mults.time-left				= 8
+
+seed						= true
+seed.start					= 100
+seed.add					= 0
+seed.mult					= 1
