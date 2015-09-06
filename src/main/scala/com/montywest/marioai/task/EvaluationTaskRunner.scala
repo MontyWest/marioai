@@ -9,7 +9,7 @@ import com.montywest.marioai.agents.MWRulesetAgentIO
 import ch.idsia.agents.Agent
 import com.montywest.marioai.agents.MWReactiveAgent
 import com.montywest.marioai.agents.MWRulesetAgent
-import com.montywest.marioai.learning.ec.eval.EvolvedAgentRulesetEvaluator
+import com.montywest.marioai.learning.ec.eval.AgentRulesetEvaluator
 import java.io.IOException
 import java.io.FileWriter
 import com.montywest.marioai.rules.Rule

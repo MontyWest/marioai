@@ -96,6 +96,29 @@ class MWEvaluationMultipliers(
     "    greenMushroom: " + greenMushroom + "\n" +
     "    stomp: " + stomp + "\n"
   }
+  
+  override def equals(obj: Any): Boolean = {
+    obj match {
+      case other: MWEvaluationMultipliers => {
+        if (other == null) false
+        (distance == other.distance &&
+        win == other.win &&
+        mode == other.mode &&
+        coins == other.coins &&
+        flowerFire == other.flowerFire &&
+        mushroom == other.mushroom &&
+        kills == other.kills &&
+        killedByFire == other.killedByFire &&
+        killedByShell == other.killedByShell &&
+        killedByStomp == other.killedByStomp &&
+        timeLeft == other.timeLeft &&
+        hiddenBlock == other.hiddenBlock &&
+        greenMushroom == other.greenMushroom &&
+        stomp == other.stomp)
+      }
+      case _ => false
+    }
+  } 
 }
 
 object MWEvaluationMultipliers {

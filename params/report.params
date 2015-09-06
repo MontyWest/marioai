@@ -42,10 +42,14 @@ pop.subpop.0.species.condition.mutation-prob 			= 0.05
 pop.subpop.0.species.condition.favour_byte 				= -1
 pop.subpop.0.species.condition.favour_probability 		= 0.5
 
-# MarioMode Condition
+# pop.subpop.0.species.condition.0.max-gene				= -1
+# pop.subpop.0.species.condition.0.min-gene				= -1
+# pop.subpop.0.species.condition.0.mutation-prob			= 0.0
 pop.subpop.0.species.condition.0.favour_probability 	= 0.95
 
-# EnemyLeft Condition
+# pop.subpop.0.species.condition.3.max-gene				= -1
+# pop.subpop.0.species.condition.3.min-gene				= -1
+# pop.subpop.0.species.condition.3.mutation-prob		= 0.0
 pop.subpop.0.species.condition.3.favour_probability 	= 0.9
 
 
@@ -57,14 +61,13 @@ pop.subpop.0.species.action.mutation-prob 				= 0.09
 # +++ STATS +++
 stat.num-children 						= 1
 stat.child.0 							= com.montywest.marioai.learning.ec.stats.RulesetEvolveStatistics
-stat.child.0.gen-file					= ../lmm-lel-gen.stat
-stat.child.0.final-file 				= ../lmm-lel-final.stat
-stat.child.0.final-agent-file			= lmm-lel-final
-stat.child.0.best-agent-file			= lmm-lel-best
-stat.child.0.diff-agent-file			= lmm-lel-diff
+stat.child.0.gen-file					= ../report-gen.stat
+stat.child.0.final-file 				= ../report-final.stat
+stat.child.0.final-agent-file			= learnt-final
+stat.child.0.best-agent-file			= learnt-best
+stat.child.0.diff-agent-file			= learnt-diff
 stat.child.0.best-agent-limit			= 800
 stat.child.0.diff-agent-limit			= 800
-
 
 # +++ MUTATION +++
 pop.subpop.0.species.pipe.source.0 		= ec.es.ESSelection
@@ -72,7 +75,7 @@ pop.subpop.0.species.pipe 				= com.montywest.marioai.learning.ec.vector.breed.R
 
 
 # +++ EVAL +++
-eval.problem							= com.montywest.marioai.learning.ec.eval.EvolvedAgentRulesetEvaluator
+eval.problem							= com.montywest.marioai.learning.ec.eval.AgentRulesetEvaluator
 
 #	Seeds for generating levels
 #	each generation g, seed used is:

@@ -26,7 +26,7 @@ import ec.simple.SimpleProblemForm
 import ec.util.Parameter
 import ec.vector.ByteVectorIndividual
 
-class EvolvedAgentRulesetEvaluator extends Problem with SimpleProblemForm {
+class AgentRulesetEvaluator extends Problem with SimpleProblemForm {
 
   private var _taskSeeds: Vector[Int] = Vector(0);
   def taskSeeds = _taskSeeds
@@ -102,7 +102,7 @@ class EvolvedAgentRulesetEvaluator extends Problem with SimpleProblemForm {
   }
   
   override def setup(state: EvolutionState, base: Parameter): Unit = {
-    import EvolvedAgentRulesetEvaluator._
+    import AgentRulesetEvaluator._
     
     val default = defaultBase
     
@@ -163,7 +163,7 @@ class EvolvedAgentRulesetEvaluator extends Problem with SimpleProblemForm {
    * Should suffice to share, as all fields are internally immutable.
    */
   override def clone: Object = { 
-    val prob = super.clone().asInstanceOf[EvolvedAgentRulesetEvaluator]
+    val prob = super.clone().asInstanceOf[AgentRulesetEvaluator]
     prob._taskSeeds = this.taskSeeds
     prob._numberOfLevels = this.numberOfLevels
     prob._baseLevelOptions = this.baseLevelOptions.clone
@@ -176,7 +176,7 @@ class EvolvedAgentRulesetEvaluator extends Problem with SimpleProblemForm {
   
 }
 
-object EvolvedAgentRulesetEvaluator {
+object AgentRulesetEvaluator {
   
   val P_LEVEL = "level"
   val P_SEED = "seed"

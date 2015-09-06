@@ -8,7 +8,7 @@ import java.io.IOException
 import ec.Individual
 import ec.vector.ByteVectorIndividual
 import ec.simple.SimpleFitness
-import com.montywest.marioai.learning.ec.eval.EvolvedAgentRulesetEvaluator
+import com.montywest.marioai.learning.ec.eval.AgentRulesetEvaluator
 import com.montywest.marioai.rules.Ruleset
 import com.montywest.marioai.agents.MWRulesetAgent
 import ch.idsia.agents.Agent
@@ -19,8 +19,10 @@ class RulesetEvolveStatistics extends Statistics {
   var genLog: Int = 0
   var finalLog: Int = 0
   var bestAgentFilename: Option[String] = None
+  var bestAgentLimit: Int = 0
   var finalAgentFilename: Option[String] = None
   var diffAgentFilename: Option[String] = None
+  var diffAgentLimit: Int = 0
   var overallBestIndividual: Option[(Int, ByteVectorIndividual)] = None
   var currentBestIndividual: Option[(Int, ByteVectorIndividual)] = None
   var biggestDiffIndividual: Option[(Int, Double, ByteVectorIndividual)] = None
@@ -67,6 +69,8 @@ class RulesetEvolveStatistics extends Statistics {
       }
     }
     
+    bestAgentLimit = state.parameters.getIntWithDefault(base.push(P_BEST_AGENT_LIMIT), null, 0)
+    
     diffAgentFilename = {
       val str = state.parameters.getStringWithDefault(base.push(P_DIFF_AGENT_FILE), null, "")
       if (str == "") {
@@ -75,6 +79,8 @@ class RulesetEvolveStatistics extends Statistics {
         Some(str)
       }
     }
+    
+    diffAgentLimit = state.parameters.getIntWithDefault(base.push(P_DIFF_AGENT_LIMIT), null, 0)
     
     
     milliCheckpoint = System.currentTimeMillis()
@@ -86,7 +92,7 @@ class RulesetEvolveStatistics extends Statistics {
     //Write last population to finalLog
     state.population.subpops(0).printSubpopulationForHumans(state, finalLog)
     
-    val fallback = state.evaluator.p_problem.asInstanceOf[EvolvedAgentRulesetEvaluator].fallbackAction
+    val fallback = state.evaluator.p_problem.asInstanceOf[AgentRulesetEvaluator].fallbackAction
     
     //Write best and last best to agent files
     if (bestAgentFilename.isDefined && overallBestIndividual.isDefined) {
@@ -119,7 +125,7 @@ class RulesetEvolveStatistics extends Statistics {
     state.output.println("------------------- GENERATION " + genNum + " -------------------\n", genLog)
     
     val levelSeed: Int = state.evaluator.p_problem match {
-      case eare: EvolvedAgentRulesetEvaluator => eare.taskSeeds.apply(genNum)
+      case eare: AgentRulesetEvaluator => eare.taskSeeds.apply(genNum)
     }
     var bestScore: Double = 0.0
     var bestInd: Option[ByteVectorIndividual] = None
@@ -173,19 +179,21 @@ class RulesetEvolveStatistics extends Statistics {
         
      if (bestInd.isDefined) {
        currentBestIndividual = Some(genNum, bestInd.get)
-       overallBestIndividual match {
-         case Some((_: Int, bvi: ByteVectorIndividual)) => bvi.fitness match {
-           case f: SimpleFitness => {
-             if (bestScore >= f.fitness()) {
-               overallBestIndividual = Some(genNum, bestInd.get)
+       if (genNum >= bestAgentLimit) {
+         overallBestIndividual match {
+           case Some((_: Int, bvi: ByteVectorIndividual)) => bvi.fitness match {
+             case f: SimpleFitness => {
+               if (bestScore >= f.fitness()) {
+                 overallBestIndividual = Some(genNum, bestInd.get)
+               }
              }
+             case _ => state.output.fatal("This statistics class (RulesetEvolveStatistics) requires individuals with SimpleFitness")
            }
-           case _ => state.output.fatal("This statistics class (RulesetEvolveStatistics) requires individuals with SimpleFitness")
+           case None => overallBestIndividual = Some(genNum, bestInd.get)
          }
-         case None => overallBestIndividual = Some(genNum, bestInd.get)
        }
        
-       if (genNum > 0.75*state.numGenerations) {
+       if (genNum >= diffAgentLimit) {
          biggestDiffIndividual match {
            case Some((_: Int, diff: Double, bvi: ByteVectorIndividual)) => {
              if ((bestScore - avScore) >= diff) {
@@ -206,5 +214,7 @@ object RulesetEvolveStatistics {
   val P_FINALFILE = "final-file"
   val P_FINAL_AGENT_FILE = "final-agent-file"
   val P_BEST_AGENT_FILE = "best-agent-file"
+  val P_BEST_AGENT_LIMIT = "best-agent-limit"
   val P_DIFF_AGENT_FILE = "diff-agent-file"
+  val P_DIFF_AGENT_LIMIT = "diff-agent-limit"
 }
