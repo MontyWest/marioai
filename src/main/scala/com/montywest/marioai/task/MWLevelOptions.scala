@@ -2,23 +2,26 @@ package com.montywest.marioai.task
 
 import ch.idsia.tools.MarioAIOptions
 
+/***
+ * Options that control level generation
+ */
 class MWLevelOptions(
-    val blocks: Boolean,
-    val cannons: Boolean,
-    val coins: Boolean,
-    val deadEnds: Boolean,
-    val enemies: Boolean,
-    val flatLevel: Boolean,
-    val frozenCreatures: Boolean,
-    val pits: Boolean,
-    val hiddenBlocks: Boolean,
-    val tubes: Boolean,
-    val ladders: Boolean,
-    val levelDifficulty: Int,
-    val levelLength: Int,
-    val levelType: Int,
-    val startingMarioMode: Int,
-    val timeLimit: Int
+    val blocks: Boolean,   // Blocks appear
+    val cannons: Boolean,  // Cannons appear
+    val coins: Boolean,    // Coins appear
+    val deadEnds: Boolean, // Dead ends appear in terrain forcing Mario to turn back
+    val enemies: Boolean,  // Enemies/Creatures appear
+    val flatLevel: Boolean, // Level is flat, no change in elevation
+    val frozenCreatures: Boolean, // All creatures are frozen and don't move
+    val pits: Boolean,     // Pits appear
+    val hiddenBlocks: Boolean, // Hidden blocks appear
+    val tubes: Boolean,    // Tubes/Pipes appear (occasionally with piranha plant enemies
+    val ladders: Boolean,  // Ladders appear
+    val levelDifficulty: Int, // Difficulty of level, effective range 0-25, 0 easiest
+    val levelLength: Int,  // Length of level in blocks
+    val levelType: Int,    // Type of level, 0-Outside 1-Cave, 2-Castle
+    val startingMarioMode: Int, // Mode Mario starts as 0-small, 1-big, 2-fire
+    val timeLimit: Int     // Number of Mario seconds allowed to complete level
 ) {
   
   override def clone: MWLevelOptions = {
@@ -107,6 +110,31 @@ class MWLevelOptions(
      "  levelType: " + levelType + "\n" +
      "  startingMarioMode: " + startingMarioMode + "\n" +
      "  timeLimit: " + timeLimit + "\n"
+  }
+  
+  override def equals(obj: Any): Boolean = {
+    obj match {
+      case other: MWLevelOptions => {
+        if (other == null) false
+        (blocks == other.blocks &&
+        cannons == other.cannons &&
+        coins == other.coins &&
+        deadEnds == other.deadEnds &&
+        enemies == other.enemies &&
+        flatLevel == other.flatLevel &&
+        frozenCreatures == other.frozenCreatures &&
+        pits == other.pits &&
+        hiddenBlocks == other.hiddenBlocks &&
+        tubes == other.tubes &&
+        ladders == other.ladders &&
+        levelDifficulty == other.levelDifficulty &&
+        levelLength == other.levelLength &&
+        levelType == other.levelType &&
+        startingMarioMode ==  other.startingMarioMode &&
+        timeLimit == other.timeLimit)
+      }
+      case _ => false
+    }
   }
 }
 

@@ -2,14 +2,16 @@ package com.montywest.marioai.task
 
 import ch.idsia.tools.MarioAIOptions
 import ch.idsia.agents.Agent
+import ch.idsia.tools.EvaluationInfo
 
 class MWEvaluationTask(val numberOfLevels: Int, 
                        val evalValues: MWEvaluationMultipliers, 
                        override val baseLevelOptions: MWLevelOptions, 
                        override val updateOptionsFunc: (Int, MWLevelOptions) => MWLevelOptions, 
                        override val visualisation: Boolean, 
-                       override val args: Array[String])
-                           extends MWBasicTask("MWMainPlayTask", baseLevelOptions, updateOptionsFunc, visualisation, args) with EvaluationTask {
+                       override val args: Array[String],
+                       override val saveLevelScores: Boolean)
+                           extends MWBasicTask("MWMainPlayTask", baseLevelOptions, updateOptionsFunc, visualisation, args, saveLevelScores) with EvaluationTask {
 
   private var baseLevelSeed: Int = 0;
     
@@ -44,6 +46,10 @@ class MWEvaluationTask(val numberOfLevels: Int,
   override def getBaseLevelSeed: Int = {
     baseLevelSeed
   }
+  
+  override def getLevelScore(eval: EvaluationInfo): Int = {
+    eval.computeWeightedFitness(evalValues)
+  }
 }
 
 object MWEvaluationTask {
@@ -53,9 +59,10 @@ object MWEvaluationTask {
             baseLevelOptions: MWLevelOptions, 
             updateOptionsFunc: (Int, MWLevelOptions) => MWLevelOptions, 
             visualisation: Boolean = true, 
-            args: Array[String] = Array.empty): MWEvaluationTask = {
+            args: Array[String] = Array.empty,
+            saveLevelScores: Boolean = false): MWEvaluationTask = {
     
-    new MWEvaluationTask(numberOfLevels, evalValues, baseLevelOptions, updateOptionsFunc, visualisation, args)
+    new MWEvaluationTask(numberOfLevels, evalValues, baseLevelOptions, updateOptionsFunc, visualisation, args, saveLevelScores)
   }
   
 }

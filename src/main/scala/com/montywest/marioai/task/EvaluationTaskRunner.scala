@@ -108,6 +108,8 @@ object EvaluationTaskRunner {
     val params: (MWLevelOptions, (Int, MWLevelOptions) => MWLevelOptions, MWEvaluationMultipliers, Int) =
       getStringArg(PARAMS_KEY) match {
         case Some(PARAMS_COMP) => {
+          //Throw away possible from File
+          getStringArg(PARAMS_FILE_KEY)
           (MWLevelOptions.compOptions, MWLevelOptions.compUpdate(levelSeed), MWEvaluationMultipliers.compEvaluationMulipliers, 512)
         }
         case Some(PARAMS_FROM_FILE) => {
@@ -177,11 +179,13 @@ object EvaluationTaskRunner {
 //    println(evals.toString)
     
       
-    val task = MWEvaluationTask(numberOfLevels, evals, baseLevelOptions, updateOptionsFn, vis, args.drop(argsDrop))
-                .withLevelSeed(levelSeed).withAgent(agent)
 
     println("Running...")
     if (seedRuns.isDefined) {
+      val task = MWEvaluationTask(numberOfLevels, evals, baseLevelOptions, updateOptionsFn, vis, args.drop(argsDrop), false)
+                .withLevelSeed(levelSeed).withAgent(agent)
+      
+      
       var fitnessSum = 0
       
       var prevSeed = seedRuns.get._2; 
@@ -219,6 +223,10 @@ object EvaluationTaskRunner {
       }
       
     } else {
+      val task = MWEvaluationTask(numberOfLevels, evals, baseLevelOptions, updateOptionsFn, vis, args.drop(argsDrop), true)
+                .withLevelSeed(levelSeed).withAgent(agent)
+      
+      
       println
       println("Stats:")
       println
@@ -236,6 +244,24 @@ object EvaluationTaskRunner {
       }; case _ =>}
       println
       println(task.getStatistics());
+      
+      var writerOpt: Option[FileWriter] = None;
+      try {
+        writerOpt = Some(new FileWriter(outfile))
+        val writer = writerOpt.get
+        
+        writer.append(task.getStatistics() + "\n\n")
+        
+        writer.append(
+          task.levelScores.mkString("\n")    
+        )
+        
+        writer.flush()
+      } catch {
+        case e: IOException => throw new IllegalArgumentException("File inaccessible or is a folder, or error on flush", e)
+      } finally {
+        if (writerOpt.isDefined) writerOpt.get.close
+      }
     }
 
   }

@@ -3,10 +3,10 @@ parent.0 = @ec.es.ESDefaults es.params
 #General
 breedthreads 	= 4
 evalthreads 	= 1
-seed.0 = 1
-seed.1 = 909
-seed.2 = 499311
-seed.3 = 90032
+seed.0 = 1849
+seed.1 = 39933
+seed.2 = 34
+seed.3 = 7748
 
 
 # +++ ES +++
@@ -23,7 +23,7 @@ pop.subpop.0.species 				= com.montywest.marioai.learning.ec.vector.RulesetSpeci
 pop.subpop.0.species.fitness		= ec.simple.SimpleFitness
 
 #	 Rulelength 15, So 20 rules gives 300
-pop.subpop.0.species.genome-size 	= 300
+pop.subpop.0.species.genome-size 	= 240
 pop.subpop.0.species.ind 			= ec.vector.ByteVectorIndividual
 
 #	These will be ignored, but warnings otherwise 
@@ -40,17 +40,17 @@ pop.subpop.0.species.dynamic-param-class = com.montywest.marioai.learning.ec.par
 pop.subpop.0.species.condition							= true
 pop.subpop.0.species.condition.mutation-prob 			= 0.05
 pop.subpop.0.species.condition.favour_byte 				= -1
-pop.subpop.0.species.condition.favour_probability 		= 0.5
+pop.subpop.0.species.condition.favour_probability 		= 0.55
 
-# pop.subpop.0.species.condition.0.max-gene				= -1
-# pop.subpop.0.species.condition.0.min-gene				= -1
-# pop.subpop.0.species.condition.0.mutation-prob			= 0.0
-pop.subpop.0.species.condition.0.favour_probability 	= 0.95
+pop.subpop.0.species.condition.0.max-gene				= -1
+pop.subpop.0.species.condition.0.min-gene				= -1
+pop.subpop.0.species.condition.0.mutation-prob			= 0.0
+# pop.subpop.0.species.condition.0.favour_probability 	= 0.95
 
-# pop.subpop.0.species.condition.3.max-gene				= -1
-# pop.subpop.0.species.condition.3.min-gene				= -1
-# pop.subpop.0.species.condition.3.mutation-prob		= 0.0
-pop.subpop.0.species.condition.3.favour_probability 	= 0.9
+pop.subpop.0.species.condition.3.max-gene				= -1
+pop.subpop.0.species.condition.3.min-gene				= -1
+pop.subpop.0.species.condition.3.mutation-prob		= 0.0
+# pop.subpop.0.species.condition.3.favour_probability 	= 0.9
 
 
 #	Action params
@@ -63,9 +63,9 @@ stat.num-children 						= 1
 stat.child.0 							= com.montywest.marioai.learning.ec.stats.RulesetEvolveStatistics
 stat.child.0.gen-file					= ../report-gen.stat
 stat.child.0.final-file 				= ../report-final.stat
-stat.child.0.final-agent-file			= learnt-final
-stat.child.0.best-agent-file			= learnt-best
-stat.child.0.diff-agent-file			= learnt-diff
+stat.child.0.final-agent-file			= rep-final
+stat.child.0.best-agent-file			= rep-best
+stat.child.0.diff-agent-file			= rep-diff
 stat.child.0.best-agent-limit			= 800
 stat.child.0.diff-agent-limit			= 800
 
@@ -82,9 +82,9 @@ eval.problem							= com.montywest.marioai.learning.ec.eval.AgentRulesetEvaluato
 #		prev_seed + add + g*mult
 #   where prev_seed is seed_start on g  = 0
 eval.problem.seed						= true
-eval.problem.seed.start					= 3348
-eval.problem.seed.add					= 284839
-eval.problem.seed.mult					= 2568849
+eval.problem.seed.start					= 48988493
+eval.problem.seed.add					= 4774339
+eval.problem.seed.mult					= 9943834
 
 #	Levels
 eval.problem.level						= true
@@ -108,7 +108,7 @@ eval.problem.level.3.type-num			= 0
 eval.problem.level.4.difficulty-num		= 2
 eval.problem.level.4.flat				= true
 eval.problem.level.5.difficulty-num		= 7
-eval.problem.level.6.difficulty-num		= 2
+eval.problem.level.6.difficulty-num		= 4
 eval.problem.level.6.flat				= false
 eval.problem.level.6.enemies			= true
 eval.problem.level.6.frozen-enemies		= true
@@ -117,7 +117,7 @@ eval.problem.level.7.frozen-enemies		= false
 eval.problem.level.8.difficulty-num		= 3
 eval.problem.level.8.type-num			= 1
 eval.problem.level.8.tubes				= true
-eval.problem.level.9.difficulty-num		= 5
+eval.problem.level.9.difficulty-num		= 6
 eval.problem.level.9.type-num			= 0
 eval.problem.level.9.cannons			= true
 eval.problem.level.9.blocks				= false

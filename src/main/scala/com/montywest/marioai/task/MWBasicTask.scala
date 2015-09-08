@@ -12,13 +12,15 @@ abstract class MWBasicTask(val name: String,
                            val baseLevelOptions: MWLevelOptions,
                            val updateOptionsFunc: (Int, MWLevelOptions) => MWLevelOptions,
                            val visualisation: Boolean, 
-                           val args: Array[String]) 
+                           val args: Array[String],
+                           val saveLevelScores: Boolean) 
                                extends BasicTask({
                                          val marioAIOptions = new MarioAIOptions(args)
                                          marioAIOptions.setVisualization(visualisation)
                                          marioAIOptions
                                        }) with Task {
 
+  var levelScores: Seq[Int] = Nil
   val localEvaluationInfo = new EvaluationInfo();
   var disqualifications = 0;
   localEvaluationInfo.setTaskName(name);
@@ -36,10 +38,13 @@ abstract class MWBasicTask(val name: String,
   
   protected def getBaseLevelSeed: Int
   
+  protected def getLevelScore(envEvalInfo: EvaluationInfo): Int
+  
   override def doEpisodes(amount: Int, verbose: Boolean, repetitionsOfSingleEpisode: Int): Unit = {
     @tailrec
     def runSingle(iteration: Int, prevOptions: MWLevelOptions, disqualifications: Int): Int = {
-      if (iteration == amount) { 
+      if (iteration == amount) {
+        finishLevelScores
         disqualifications
       } else {
         val newOptions = updateOptions(iteration, prevOptions)
@@ -50,6 +55,7 @@ abstract class MWBasicTask(val name: String,
         super.setOptionsAndReset(marioAIOptions)
         val disqualified: Int = if (!runSingleEpisode(repetitionsOfSingleEpisode)) 1 else 0
         
+        logLevelScore(iteration, getLevelScore(super.getEvaluationInfo))
         updateLocalEvaluationInfo(super.getEvaluationInfo)
         runSingle(iteration+1, newOptions, disqualifications + disqualified)
       }
@@ -73,6 +79,21 @@ abstract class MWBasicTask(val name: String,
     options.setLevelRandSeed(seed)
     reset
     if (resetEval) this.resetLocalEvaluationInfo
+  }
+  
+  private def logLevelScore(ep: Int, score: Int): Unit = {
+    if (visualisation) {
+      println("Episode " + ep + " score: " + score)
+    }
+    if (saveLevelScores) {
+      levelScores = score +: levelScores
+    }
+  }
+  
+  private def finishLevelScores: Unit = {
+    if (saveLevelScores) {
+      levelScores = levelScores.reverse
+    }
   }
   
   def getStatistics(): String = {

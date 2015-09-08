@@ -109,14 +109,62 @@ class EvaluationParamsUtilTest extends FlatSpec with Matchers with MockFactory w
   }
   
   "getBaseLevelOptions" should "return params from db" in {
+    val base = blankParam.push(EvaluationParamsUtil.P_LEVEL_BASE)
+    val optBase = base.push(EvaluationParamsUtil.P_BASE_OPTIONS)
+    (pdStub.exists _) when(base, *) returns(true)
     
+    (pdStub.exists _) when(optBase.push(EvaluationParamsUtil.P_BLOCKS), *) returns(true)
+    (pdStub.getBoolean _) when(optBase.push(EvaluationParamsUtil.P_BLOCKS), *, *) returns(false)
+    
+    (pdStub.exists _) when(optBase.push(EvaluationParamsUtil.P_LENGTH), *) returns(true)
+    (pdStub.getIntWithDefault _) when(optBase.push(EvaluationParamsUtil.P_LENGTH), *, *) returns(100)
+    
+    (pdStub.exists _) when(optBase.push(EvaluationParamsUtil.P_PITS), *) returns(true)
+    (pdStub.getBoolean _) when(optBase.push(EvaluationParamsUtil.P_PITS), *, *) returns(false)
+    
+    val baseOpt = EvaluationParamsUtil.getBaseLevelOptions(pdStub, base);
+    val defaultOpt = MWLevelOptions.defaultOptions
+
+    
+    assert(baseOpt.blocks == false)
+    assert(baseOpt.levelLength == 100)
+    assert(baseOpt.pits == false)
+    assert(baseOpt.tubes == defaultOpt.tubes)
+    assert(baseOpt.startingMarioMode == defaultOpt.startingMarioMode)
+    assert(baseOpt.timeLimit == defaultOpt.timeLimit)
   }
   
   "getUpdateLevelOptionsFunction" should "return trivial lambda for blank database" in {
+    val base = blankParam.push(EvaluationParamsUtil.P_LEVEL_BASE)
+    (pdStub.exists _) when(*, *) returns(false)
     
+    val updateOpt = EvaluationParamsUtil.getUpdateLevelOptionsFunction(pdStub, base, 3)
+    val defaultOpt = MWLevelOptions.defaultOptions
+    
+    assert(updateOpt(0, defaultOpt) == defaultOpt)
+    assert(updateOpt(1, defaultOpt) == defaultOpt)
+    assert(updateOpt(2, defaultOpt) == defaultOpt)
   }
   
   "getUpdateLevelOptionsFunction" should "return param lambda from database" in {
+    val base = blankParam.push(EvaluationParamsUtil.P_LEVEL_BASE)
+    (pdStub.exists _) when(base, *) returns(true)
     
+    (pdStub.exists _) when(base.push(""+0).push(EvaluationParamsUtil.P_BLOCKS), *) returns(true)
+    (pdStub.getBoolean _) when(base.push(""+0).push(EvaluationParamsUtil.P_BLOCKS), *, *) returns(false)
+    
+    (pdStub.exists _) when(base.push(""+1).push(EvaluationParamsUtil.P_LENGTH), *) returns(true)
+    (pdStub.getIntWithDefault _) when(base.push(""+1).push(EvaluationParamsUtil.P_LENGTH), *, *) returns(100)
+    
+    (pdStub.exists _) when(base.push(""+2).push(EvaluationParamsUtil.P_PITS), *) returns(true)
+    (pdStub.getBoolean _) when(base.push(""+2).push(EvaluationParamsUtil.P_PITS), *, *) returns(false)
+    
+    val updateOpt = EvaluationParamsUtil.getUpdateLevelOptionsFunction(pdStub, base, 3)
+    val defaultOpt = MWLevelOptions.defaultOptions
+    
+    assert(updateOpt(0, defaultOpt).blocks == false)
+    assert(updateOpt(1, defaultOpt).levelLength == 100)
+    assert(updateOpt(2, defaultOpt).pits == false)
+    assert(updateOpt(3, defaultOpt) == defaultOpt)
   }
 }

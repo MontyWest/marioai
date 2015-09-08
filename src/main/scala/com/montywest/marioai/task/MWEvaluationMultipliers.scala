@@ -3,21 +3,29 @@ package com.montywest.marioai.task
 import scala.language.implicitConversions
 import ch.idsia.benchmark.tasks.SystemOfValues
 
+/***
+ * Multipliers for several level playing
+ * statistics.
+ * Comments describe the statistic.
+ * For example, if Mario completes the level
+ * It will be win * 1, otherwise it will win * 0
+ */
 class MWEvaluationMultipliers(
-  val distance: Int,
-  val win: Int,
-  val mode: Int,
-  val coins: Int,
-  val flowerFire: Int,
-  val kills: Int,
-  val killedByFire: Int,
-  val killedByShell: Int,
-  val killedByStomp: Int,
-  val mushroom: Int,
-  val timeLeft: Int,
-  val hiddenBlock: Int,
-  val greenMushroom: Int,
-  val stomp: Int) {
+  val distance: Int, // Distance travelled by Mario in pixels (16 pixels to a block)
+  val win: Int,      // 1 for level complete, 0 otherwise
+  val mode: Int,     // Mario's final mode on completion or death, 2-fire, 1-big, 0-small
+  val coins: Int,    // Number of coins collected
+  val flowerFire: Int, // Number fire flowers collected
+  val kills: Int,    // Number of enemy kills
+  val killedByFire: Int, // Number of kills by fireball
+  val killedByShell: Int, // Number of kills by shell
+  val killedByStomp: Int, // Number of kills by stomp
+  val mushroom: Int, // Number of mushrooms collected
+  val timeLeft: Int, // Mario seconds left on completion, 0 if level not completed
+  val hiddenBlock: Int, // Number of hidden blocks hit
+  val greenMushroom: Int, // Number of green mushrooms 
+  val stomp: Int) // Unused
+  {
   
   override def clone: MWEvaluationMultipliers = {
     new MWEvaluationMultipliers(distance, win, mode, coins, flowerFire, kills, killedByFire, killedByShell, killedByStomp, mushroom, timeLeft, hiddenBlock, greenMushroom, stomp)
@@ -141,7 +149,22 @@ object MWEvaluationMultipliers {
   }
 
   val defaultEvaluationMultipliers = 
-    new MWEvaluationMultipliers(1, 2048, 16, 16, 64, 58, 42, 4, 17, 12, 8, 24, 58, 10)
+    new MWEvaluationMultipliers(
+        1,    //Distance
+        2048, //Win
+        16,   //Mode
+        16,   //Coins
+        64,   //FlowerFire
+        58,   //Mushroom
+        42,   //Kills
+        4,    //KilledByFire
+        17,   //KilledByShell
+        12,   //KilledByStomp
+        8,    //TimeLeft
+        24,   //HiddenBlock
+        58,   //GreenMushroom
+        10    //Stomp
+    )   
   
   val compEvaluationMulipliers = defaultEvaluationMultipliers
   

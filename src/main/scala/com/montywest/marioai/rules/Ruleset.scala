@@ -4,14 +4,25 @@ import scala.annotation.tailrec
 import scala.language.implicitConversions
 import scala.language.postfixOps
 import scala.collection.mutable.WrappedArray
+import scala.collection.mutable.Map
 
+/***
+ * Container for an agent's rules.
+ * Includes a default action if no rules match the current environment
+ */
 class Ruleset( val rules: Seq[Rule], val defaultAction: MWAction, favourHigher: Boolean = true) {
-
-  import scala.collection.mutable.Map
+  
+  /***
+   * Logs which rules are used and how many times.
+   */
   val ruleUsage: Map[Int, Int] = Map();
   
   def length = rules.length
   
+  /***
+   * Returns true is second argument is strictly higher than first argument.
+   * If they are equal then result return is NOT favourHigher.
+   */
   private val newRuleBetter: (Int, Int) => Boolean = {
     if(favourHigher)
       (best:Int, newScore: Int) => best<newScore
@@ -19,6 +30,11 @@ class Ruleset( val rules: Seq[Rule], val defaultAction: MWAction, favourHigher: 
       (best:Int, newScore: Int) => best<=newScore
   }
   
+  /***
+   * Applies observation ot rule set
+   * Returns the action that belongs the highest scoring rule,
+   * as an ExAction.
+   */
   def getBestExAction(observation: Observation): ExAction = {
     
     @tailrec
@@ -44,6 +60,11 @@ class Ruleset( val rules: Seq[Rule], val defaultAction: MWAction, favourHigher: 
     }
   }
   
+  /***
+   * Returns the vector representation of the ruleset,
+   * defaultAction can be removed with parameter.
+   * If included it is represented by rule contain all DONT_CARE for conditions
+   */
   def getVectorRep(withDefaultAction: Boolean = true): Vector[Byte] = {
     if (!withDefaultAction)
       (rules.map { r => r.getVectorRep } toVector).flatten
@@ -52,6 +73,9 @@ class Ruleset( val rules: Seq[Rule], val defaultAction: MWAction, favourHigher: 
       Vector.fill(Conditions.LENGTH)(-1: Byte) ++ defaultAction
   }
   
+  /***
+   * Increments the map store of rule usage for rule index
+   */
   private def incrementRuleUsage(index: Int): Unit = {
 //    println("Rule used: " + index)
     ruleUsage.get(index) match {
@@ -63,6 +87,7 @@ class Ruleset( val rules: Seq[Rule], val defaultAction: MWAction, favourHigher: 
   def resetRuleUsage = {
     ruleUsage.clear()
   }
+  
   
   override def toString: String = {
     rules.zipWithIndex map { 
@@ -79,7 +104,6 @@ class Ruleset( val rules: Seq[Rule], val defaultAction: MWAction, favourHigher: 
   override def hashCode: Int =
     this.getVectorRep(true).hashCode()
   
-  
   override def equals(other: Any): Boolean = other match {
     case that: Rule =>
       that.getVectorRep == this.getVectorRep(true)
@@ -92,10 +116,18 @@ object Ruleset {
     
   val FALLBACK_ACTION = MWAction(KeyRight, KeySpeed, KeyJump)
   
+  /***
+   * Builds a ruleset from a set of rules and default action keypresses
+   */
   def apply(rules: Seq[Rule], defaultAction: Set[KeyPress]): Ruleset = {
     new Ruleset(rules, MWAction.build(defaultAction))
   }
   
+  /***
+   * Builds a ruleset from its vector representation.
+   * If the vector contains a DONT_CARE rule as its final rule, then this is used as default action
+   * A fallback default action can be passed that is used if a default action is not present.
+   */
   def build(vec: Vector[Byte], fallbackDefaultAction: MWAction = FALLBACK_ACTION): Ruleset = {
     val twodim = vec.grouped(Rule.TOTAL_LENGTH).toVector
     val lastIndex = twodim.length - 1
@@ -115,6 +147,11 @@ object Ruleset {
     } else throw new IllegalArgumentException("Malformed vector representation of ruleset")
   }
   
+  /***
+   * Builds a ruleset from its array representation.
+   * If the array contains a DONT_CARE rule as its final rule, then this is used as default action
+   * A fallback default action can be passed that is used if a default action is not present.
+   */
   def buildFromArray(arr: Array[Byte], fallbackAction: MWAction): Ruleset = {
     val wa: WrappedArray[Byte] = arr
     Ruleset.build(wa.toVector, fallbackAction)
