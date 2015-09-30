@@ -31,7 +31,7 @@ object EvaluationTaskRunner {
   
   val AGENT_FILE_KEY = "-agent"
   val AGENT_HUMAN = "human"
-  val AGENT_FILE_DEFAULT = "agents/forward-jumping.agent"
+  val AGENT_FILE_DEFAULT = "agents/complex.agent"
   
   val PARAMS_KEY = "-params"
   val PARAMS_FROM_FILE = "fromFile"
@@ -41,7 +41,7 @@ object EvaluationTaskRunner {
   val EVAL_MULTS_DEFAULT = MWEvaluationMultipliers.defaultEvaluationMultipliers
   
   val PARAMS_FILE_KEY = "-paramsFile"
-  val PARAMS_FILE_DEFAULT = "params/vischeck.params"
+  val PARAMS_FILE_DEFAULT = "params/demo.params"
 
   def run(args: Array[String], vis: Boolean): Unit = {
     var argsDrop = 0;
@@ -187,6 +187,8 @@ object EvaluationTaskRunner {
       
       
       var fitnessSum = 0
+      var bestFitness = 0
+      var worstFitness = 0
       
       var prevSeed = seedRuns.get._2; 
       def memmedTS(g: Int): Int = {
@@ -207,6 +209,13 @@ object EvaluationTaskRunner {
           val fit = task.withLevelSeed(seed).evaluate
           
           fitnessSum = fitnessSum + fit
+          if (fit > bestFitness) {
+            bestFitness = fit
+          }
+          if (fit < worstFitness || worstFitness == 0) {
+            worstFitness = fit
+          }
+          
           val all = "~all~ " + i + "," + seed + "," + fit
           println("Evalled: " + fit + " - LS: " + seed)
           writer.append(all + "\n")
@@ -214,6 +223,10 @@ object EvaluationTaskRunner {
         val avg = fitnessSum.toDouble/seedRuns.get._1.toDouble
         println("\n\nAverage: " + avg)
         writer.append("\n\nAverage: " + avg)
+        println("\nBest: " + bestFitness)
+        writer.append("\nBest: " + bestFitness)
+        println("\nWorst: " + worstFitness)
+        writer.append("\nWorst: " + worstFitness)
         
         writer.flush()
       } catch {

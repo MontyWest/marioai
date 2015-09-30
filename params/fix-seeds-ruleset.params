@@ -57,11 +57,11 @@ pop.subpop.0.species.action.mutation-prob 				= 0.09
 # +++ STATS +++
 stat.num-children 						= 1
 stat.child.0 							= com.montywest.marioai.learning.ec.stats.RulesetEvolveStatistics
-stat.child.0.gen-file					= ../lmm-lel-gen.stat
-stat.child.0.final-file 				= ../lmm-lel-final.stat
-stat.child.0.final-agent-file			= lmm-lel-final
-stat.child.0.best-agent-file			= lmm-lel-best
-stat.child.0.diff-agent-file			= lmm-lel-diff
+stat.child.0.gen-file					= ../fix-seeds-gen.stat
+stat.child.0.final-file 				= ../fix-seeds-final.stat
+stat.child.0.final-agent-file			= fix-seeds-final
+stat.child.0.best-agent-file			= fix-seeds-best
+stat.child.0.diff-agent-file			= fix-seeds-diff
 stat.child.0.best-agent-limit			= 800
 stat.child.0.diff-agent-limit			= 800
 
@@ -79,9 +79,9 @@ eval.problem							= com.montywest.marioai.learning.ec.eval.AgentRulesetEvaluato
 #		prev_seed + add + g*mult
 #   where prev_seed is seed_start on g  = 0
 eval.problem.seed						= true
-eval.problem.seed.start					= 3348
-eval.problem.seed.add					= 284839
-eval.problem.seed.mult					= 2568849
+eval.problem.seed.start					= 323548323
+eval.problem.seed.add					= 0
+eval.problem.seed.mult					= 0
 
 #	Levels
 eval.problem.level						= true

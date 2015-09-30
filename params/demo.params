@@ -1,0 +1,38 @@
+level.base.dead-ends 		= false
+level.base.enemies			= true
+level.base.cannons			= false
+level.base.pipes			= true
+level.base.start-mode-num  	= 2
+level.base.type-num			= 0
+level.base.length-num		= 200
+level.base.time-limit		= 100
+
+level						= true
+level.num-levels			= 8
+level.0.difficulty-num		= 14
+level.0.pipes				= false
+level.0.cannons				= true
+level.1.difficulty-num		= 10
+level.1.type-num			= 1
+level.1.pipes				= true
+level.1.blocks				= true
+level.1.cannons				= false
+level.2.difficulty-num		= 7
+level.2.pipes				= false
+level.2.type-num			= 2
+level.3.difficulty-num		= 6
+level.2.type-num			= 0
+level.4.difficulty-num		= 5
+level.5.difficulty-num		= 3
+level.6.difficulty-num		= 2
+level.7.difficulty-num		= 0
+level.7.blocks				= false
+
+
+
+mults						= true
+mults.distance				= 1
+mults.win					= 1248 
+mults.mode					= 32
+mults.time-left				= 8
+mults.kills					= 42
