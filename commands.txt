@@ -1,0 +1,15 @@
+java -jar marioai-full.jar -mode watch -params fromFile -paramsFile params/demo.params -agent agents/complex.agent -seed 20 -fps 40
+
+java -jar marioai-full.jar -mode eval -params fromFile -paramsFile params/demo.params -agent agents/complex.agent -seed 20
+
+cd ~/development/Project/montywest-marioai/
+sh demo_push-params-jar.sh
+ssh deploy@colossus.bullorbear.com
+cd monty/mario/
+sh runners/demo_fix-seeds-runner.sh
+tail -f -n 100 demo_fix-seeds.log
+tail -f -n 100 demo_fix-seeds-gen.stat
+exit
+
+
+java -jar marioai-full.jar -mode eval -params comp -agent agents/complex.agent -seed 20
